@@ -1,0 +1,166 @@
+.gallerySection {
+  padding: 2rem;
+}
+.gallerySection h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.galleryGrid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.galleryImage {
+  width: 200px;
+  height: 140px;
+  object-fit: cover;
+  /* border-radius: var(--border-radius); */
+}
+
+.galleryCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 !important;
+  min-width: 350px;
+  max-width: 500px;
+  flex: 1 1 300px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+  background: #fff;
+  margin: 0.5rem;
+}
+
+.galleryCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.galleryCard .imageWrapper {
+  aspect-ratio: 16/9;
+  width: 100%;
+  min-width: 350px;
+  max-width: 500px;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.galleryCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+}
+
+.galleryCard:hover img {
+  transform: scale(1.05);
+}
+
+.galleryCard .overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.55) 70%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.galleryCard:hover .overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.galleryCard .badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #2563eb;
+  color: #fff;
+  padding: 0.35em 1em;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .galleryGrid {
+    gap: 0.5rem;
+  }
+  .galleryImage {
+    width: 45vw;
+    max-width: 160px;
+    height: 100px;
+  }
+  .galleryCard {
+    min-width: 180px;
+    max-width: 220px;
+  }
+  .galleryCard .imageWrapper {
+    min-width: 220px;
+    max-width: 98vw;
+    height: 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .gallerySection {
+    padding: 1rem;
+  }
+  .galleryImage {
+    width: 90vw;
+    max-width: 120px;
+    height: 70px;
+  }
+  .galleryCard {
+    min-width: 120px;
+    max-width: 100%;
+  }
+  .galleryCard .imageWrapper {
+    min-width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}
+
+/* Medium-large gallery card and image sizes */
+/* .galleryCard {
+  min-width: 450px;
+  max-width: 650px;
+}
+
+.galleryCard .imageWrapper {
+  min-width: 450px;
+  max-width: 650px;
+  height: 300px;
+} */
+
+.galleryCard {
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.galleryCard .imageWrapper {
+  min-width: 300px;
+  max-width: 700px;
+  height: 280px;
+}

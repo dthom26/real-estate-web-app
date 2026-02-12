@@ -1,0 +1,218 @@
+.reviewContainer {
+  background: var(--background-color);
+}
+.reviewSection {
+  min-height: 50vh;
+  padding: 3rem 1rem;
+  /* border-top: #222 1px solid; */
+
+  /* Grid setup for desktop */
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  /* gap: 2rem; */
+}
+
+.reviewCard {
+  /* Card spans the middle column, row 1 */
+  grid-column: 2;
+  grid-row: 1;
+
+  /* Center the content inside card */
+  text-align: center;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+  max-width: 800px;
+  margin: 0 auto;
+  border: #222 1px solid;
+  /* Remove accent border for centered design */
+  /* border: none */
+  /* box-shadow: none;
+  background: transparent; */
+  /* background: rgba(255, 255, 255, 0.35); */
+  background: white;
+  /* backdrop-filter: blur(12px); */
+  color: #222;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 0px;
+
+  /* Animation properties */
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slideOutLeft {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.slideOutRight {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.reviewCard h3 {
+  /* Name comes after comment, smaller styling */
+  font-family: var(--font-family-heading);
+  /* color: var(--primary-color); */
+  font-weight: 600;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  margin-top: 1.5rem;
+  margin-bottom: 0.25rem;
+  color: #222;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.reviewCard div {
+  /* Comment is larger and prominent */
+  /* color: var(--text-color); */
+  font-size: clamp(1.1rem, 3vw, 2rem);
+  line-height: 1.6;
+  font-weight: 400;
+  color: #222;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.navigation {
+  /* Pagination dots span middle column, row 2 */
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pagination {
+  /* Same as navigation - for the dots container */
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: black;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.dot:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+}
+
+.dot:disabled {
+  cursor: not-allowed;
+}
+
+.activeDot {
+  background: var(--primary-color);
+  border-color: #fff;
+  transform: scale(1.2);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.arrowBtn {
+  /* Arrows stay in their columns, row 1 */
+  grid-row: 1;
+  align-self: center;
+
+  background: var(--primary-color);
+  border: none;
+  border-radius: 50%;
+  width: clamp(48px, 8vw, 56px);
+  height: clamp(48px, 8vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.arrowBtn:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+}
+
+.arrowBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.arrowBtn.left {
+  grid-column: 1;
+}
+
+.arrowBtn.right {
+  grid-column: 3;
+}
+
+/* Mobile responsive - stack everything */
+@media (max-width: 768px) {
+  .reviewSection {
+    /* Switch to single column, arrows below */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    min-height: 60vh;
+    padding: 2rem 1rem;
+    /* gap: 1.5rem; */
+  }
+
+  .reviewCard {
+    grid-column: 1;
+    grid-row: 1;
+    /* Padding handled by clamp() above */
+  }
+
+  .arrowBtn {
+    /* Both arrows go to row 3 */
+    grid-row: 3;
+    /* Size handled by clamp() above */
+  }
+
+  .arrowBtn.left {
+    grid-column: 1;
+    justify-self: start;
+    margin-left: 1rem;
+  }
+
+  .arrowBtn.right {
+    grid-column: 1;
+    justify-self: end;
+    margin-right: 1rem;
+  }
+
+  .navigation,
+  .pagination {
+    /* Dots go to row 2 */
+    grid-column: 1;
+    grid-row: 2;
+  }
+}

@@ -1,0 +1,29 @@
+.footer {
+  background: var(--primary-color);
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 0;
+  /* margin-top: 3rem; */
+  font-size: 1rem;
+}
+.info {
+  margin-bottom: 0.5rem;
+}
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 1rem 0.2rem;
+    font-size: 0.95rem;
+  }
+  .info {
+    margin-bottom: 0.3rem;
+  }
+  .socials {
+    gap: 0.5rem;
+  }
+}

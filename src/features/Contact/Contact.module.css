@@ -1,0 +1,258 @@
+.contactSection {
+  background: url("/src/assets/ai-generated-modern-styled-entryway.jpg")
+    center/cover no-repeat;
+  margin: 0 auto;
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+.contactContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+/* Desktop Two-Column Layout */
+@media (min-width: 768px) {
+  .contactContainer {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 4rem;
+    align-items: start; /* Keep sections aligned to top */
+  }
+
+  .contactDetails {
+    display: block !important; /* Force show on desktop */
+  }
+
+  .formHeader .getInTouch {
+    display: none; /* Hide on desktop */
+  }
+}
+
+/* Contact Details */
+.contactDetails {
+  display: block;
+}
+
+.contactDetails h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 300;
+  color: white;
+  line-height: 1.2;
+}
+
+.contactInfo {
+  margin-bottom: 2rem;
+}
+
+.contactInfo p:first-child {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.contactItem {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: white;
+}
+
+.contactItem strong {
+  color: rgba(255, 255, 255, 0.7);
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Form Section */
+.formSection {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.formHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.getInTouch {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.formHeader h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+  color: white;
+}
+
+.formHeader p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Desktop Form Header Adjustments */
+@media (min-width: 768px) {
+  .formHeader {
+    text-align: left;
+    margin-bottom: 3rem;
+  }
+
+  .formHeader h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .formHeader p {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+
+  .formSection {
+    max-width: 100%; /* Use full width on desktop */
+  }
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.nameFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Desktop adjustments for form */
+@media (min-width: 768px) {
+  .nameFields {
+    gap: 2rem;
+  }
+}
+
+/* Modern Underline Inputs */
+.contactForm input,
+.contactForm textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 1rem 0;
+  font-size: 1rem;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.contactForm input::placeholder,
+.contactForm textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+  outline: none;
+  border-bottom-color: white;
+}
+
+.contactForm textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
+  transform: translateY(-1px);
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 767px) {
+  .overlay {
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+
+  .contactContainer {
+    max-width: 100%;
+  }
+
+  .contactDetails {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .contactDetails h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .formSection {
+    max-width: 100%;
+  }
+
+  .nameFields {
+    gap: 1.5rem;
+  }
+
+  .contactForm {
+    gap: 2rem;
+  }
+
+  .formHeader h2 {
+    font-size: 2rem;
+  }
+
+  .formHeader .getInTouch {
+    display: none;
+  }
+}

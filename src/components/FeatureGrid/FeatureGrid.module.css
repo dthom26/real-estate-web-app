@@ -1,0 +1,235 @@
+/* =================================================================
+   FEATURE GRID STYLES
+   ================================================================= */
+
+/**
+ * Main Grid Container
+ * 
+ * DESIGN PATTERN: CSS Grid for Responsive Layout
+ * - Uses CSS custom properties (--columns) for flexibility
+ * - Responsive: Stacks on mobile, grid on larger screens
+ */
+.featureGrid {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile-first: single column */
+  gap: 0; /* No gap for seamless look */
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+/* Tablet and up: Show multiple columns */
+@media (min-width: 768px) {
+  .featureGrid {
+    grid-template-columns: repeat(var(--columns, 3), 1fr);
+  }
+}
+
+/* =================================================================
+   FEATURE ITEM
+   ================================================================= */
+
+/**
+ * Individual Feature Item
+ * 
+ * BEST PRACTICES:
+ * 1. position: relative - Creates positioning context for children
+ * 2. overflow: hidden - Ensures zoom effects stay contained
+ * 3. min-height - Ensures consistent sizing
+ */
+.featureItem {
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* For when it's a link */
+  color: inherit;
+  
+  /* Initial state for animation */
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Larger screens: Make taller for more impact */
+@media (min-width: 768px) {
+  .featureItem {
+    min-height: 500px;
+    height: 100%;
+  }
+}
+
+/* =================================================================
+   BACKGROUND IMAGE
+   ================================================================= */
+
+/**
+ * Background Image Layer
+ * 
+ * PATTERN: Layered approach for better control
+ * - Separate div for background allows independent animations
+ * - background-size: cover ensures image fills space
+ * - transition for smooth hover effects
+ */
+.imageBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition:
+    transform 0.6s ease,
+    filter 0.6s ease;
+  z-index: 1;
+}
+
+/* HOVER EFFECT: Subtle zoom and blur on background */
+.interactive:hover .imageBackground,
+.interactive:focus .imageBackground {
+  transform: scale(1.05); /* Slight zoom */
+  filter: blur(2px); /* Slight blur for depth */
+}
+
+/* =================================================================
+   OVERLAY
+   ================================================================= */
+
+/**
+ * Overlay Layer
+ * 
+ * PURPOSE: Ensures text readability over images
+ * BEST PRACTICE: Semi-transparent dark overlay
+ */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* 40% black overlay */
+  transition: background 0.3s ease;
+  z-index: 2;
+}
+
+/* HOVER EFFECT: Darken overlay slightly */
+.interactive:hover .overlay,
+.interactive:focus .overlay {
+  background: rgba(0, 0, 0, 0.5); /* 50% black overlay */
+}
+
+/* =================================================================
+   CONTENT
+   ================================================================= */
+
+/**
+ * Content Layer
+ * 
+ * PATTERN: Highest z-index ensures text is always on top
+ * ACCESSIBILITY: Sufficient contrast with overlay background
+ */
+.content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 2rem;
+  color: #ffffff;
+  max-width: 400px;
+}
+
+/* Title Styles */
+.title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em; /* DESIGN: Expanded letter spacing for elegance */
+  text-transform: uppercase;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for readability */
+  transition: transform 0.3s ease;
+}
+
+/* HOVER EFFECT: Slight lift on title */
+.interactive:hover .title,
+.interactive:focus .title {
+  transform: translateY(-4px);
+}
+
+/* Description Styles */
+.description {
+  font-size: 1rem;
+  margin-top: 0.75rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* =================================================================
+   INTERACTIVE STATES
+   ================================================================= */
+
+/**
+ * Interactive Item Styles
+ * 
+ * ACCESSIBILITY: Visible focus states for keyboard navigation
+ */
+.interactive {
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Focus state for keyboard navigation */
+.interactive:focus {
+  outline: 3px solid #4a90e2;
+  outline-offset: -3px;
+}
+
+/* Focus visible (modern browsers) */
+.interactive:focus-visible {
+  outline: 3px solid #4a90e2;
+  outline-offset: -3px;
+}
+
+/* Remove focus ring when clicking with mouse */
+.interactive:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =================================================================
+   RESPONSIVE ADJUSTMENTS
+   ================================================================= */
+
+/* Small tablets */
+@media (max-width: 767px) {
+  .featureItem {
+    min-height: 350px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .featureItem {
+    min-height: 300px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+}

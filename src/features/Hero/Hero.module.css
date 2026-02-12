@@ -1,0 +1,173 @@
+.heroSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: url('/src/assets/johnson-U6Q6zVDgmSs-unsplash.jpg') center/cover no-repeat, var(--background-color);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Dark overlay for better text readability */
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5));
+  z-index: 1;
+}
+
+.heroContent {
+  max-width: 900px;
+  z-index: 2;
+  position: relative;
+}
+
+.heroContent h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: white;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.heroContent p {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.ctaButton {
+  background: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+.ctaButton:hover {
+  background: var(--primary-color);
+}
+.heroImage img {
+  width: 350px;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+.overlay {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: #fff;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Fade in animation */
+.overlay {
+  animation: fadeIn 1.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* staggered animations */
+
+.overlay h1 {
+  animation: fadeSlideUp 0.8s ease-out 0.3s backwards;
+}
+
+.overlay p {
+  animation: fadeSlideUp 0.8s ease-out 0.5s backwards;
+}
+
+.ctaButton {
+  animation: fadeSlideUp 0.8s ease-out 0.7s backwards;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+@media (max-width: 900px) {
+  .overlay {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .overlay {
+    max-width: 100%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroSection {
+    flex-direction: column;
+    text-align: center;
+    padding: 6rem 1rem 2rem 1rem;
+  }
+  .heroContent {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+  .heroImage img {
+    width: 80vw;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroSection {
+    padding: 8rem 1rem 1.5rem 1rem;
+    min-height: 60vh;
+  }
+  .heroContent h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .heroContent p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  .ctaButton {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+  .heroImage img {
+    width: 95vw;
+    max-width: 220px;
+  }
+}

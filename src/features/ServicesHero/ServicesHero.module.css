@@ -1,0 +1,59 @@
+/* ServicesHero Styles */
+
+.servicesHero {
+  /* Remove default section padding for full-bleed effect */
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * DESIGN NOTE:
+ * 
+ * Most styling is handled by FeatureGrid component.
+ * This file is for any ServicesHero-specific overrides or additions.
+ * 
+ * This demonstrates SEPARATION OF CONCERNS:
+ * - Generic styles → FeatureGrid.module.css
+ * - Specific styles → ServicesHero.module.css
+ */
+
+/* Example: If you want to add spacing above/below just this instance */
+.servicesHero {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Example: Custom title color for services theme */
+/* .servicesHero .title {
+  color: var(--primary-color, #4a90e2);
+} */
+.servicesHero {
+  height: 100vh;
+}
+
+/* Animation for items */
+.fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .servicesHero {
+    height: auto;
+    min-height: 100vh;
+  }
+}

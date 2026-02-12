@@ -1,0 +1,17 @@
+{
+  "name": "cms-backend",
+  "version": "1.0.0",
+  "description": "Backend API for real estate CMS",
+  "license": "MIT",
+  "author": "dallin thomson",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
