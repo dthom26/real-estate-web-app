@@ -1,8 +1,12 @@
 import express from "express";
 import { NODE_ENV, PORT } from "./config/env.js";
 import connectDB from "./database/mongodb.js";
+import propertyRoutes from "./routes/properties.js";
 
 const app = express();
+
+// Middleware to parse JSON request bodies
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("API is running!");
@@ -11,6 +15,9 @@ app.get("/", (req, res) => {
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello World" });
 });
+
+// API Routes
+app.use("/api/properties", propertyRoutes);
 
 // Connect to database first, then start server
 connectDB()

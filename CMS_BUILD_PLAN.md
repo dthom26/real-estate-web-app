@@ -3,24 +3,27 @@
 **Project:** Real Estate Site Headless CMS  
 **Tech Stack:** Node.js, Express, MongoDB, React (Admin UI)  
 **Approach:** Learning-focused, incremental development  
-**Timeline:** ~8 weeks for complete functional CMS with admin UI  
+**Timeline:** ~8 weeks for complete functional CMS with admin UI
 
 ---
 
 ## Architecture Overview
 
 ### System Components
+
 - **Backend API** (`cms-backend/`) - Node.js + Express + MongoDB
 - **Database** - MongoDB (flexible schemas, good for varying property fields)
 - **Admin Dashboard** (`cms-admin/`) - Separate React app for content management
 - **Public Site** (`real-estate-site/`) - Existing React site (consumes API)
 
 ### Data Flow
+
 ```
 Admin User → Admin UI → REST API → MongoDB → REST API → Public Site → End User
 ```
 
 ### Why Headless?
+
 - **Decoupled:** Backend serves multiple frontends (web, mobile, etc.)
 - **Reusable:** Template for future projects
 - **Flexible:** Change frontend without touching backend
@@ -33,23 +36,27 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 **Goal:** Understand core concepts before writing code
 
 ### HTTP & REST APIs
+
 - What is HTTP? How do GET, POST, PUT, DELETE work?
 - What's a REST API? Why is it "stateless"?
 - What are request headers, body, and response codes (200, 201, 400, 401, 404, 500)?
 - **Exercise:** Open browser DevTools, go to any website, watch Network tab - see the requests/responses
 
 ### Backend vs Frontend
+
 - Why separate them? What does "headless" really mean?
 - Draw a diagram: User → Frontend (React) → API calls → Backend (Node) → Database
 - Think: Where does data validation happen? (Trick answer: BOTH places, why?)
 
 ### Databases - MongoDB Basics
+
 - What's a document database vs relational?
 - What's a "collection" vs "document"?
 - When to use MongoDB vs PostgreSQL? (Your use case has varying optional fields - perfect for Mongo)
 - **Exercise:** Install MongoDB Compass (GUI tool), create a test database, manually insert a document
 
 ### Node.js Fundamentals
+
 - What's the event loop? Why is Node.js async?
 - What's `require` vs `import`? (ES6 modules)
 - What's `package.json`? What's the difference between dependencies and devDependencies?
@@ -61,6 +68,7 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 **Goal:** Get comfortable with Express and basic routing before adding complexity
 
 ### What to Build
+
 1. Create `cms-backend/` folder
 2. `npm init` - walk through creating package.json
 3. Install ONLY `express` for now
@@ -68,6 +76,7 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 5. Start server manually: `node server.js`
 
 ### Learning Checkpoints
+
 - Explain what `app.listen(port)` does - what is a port?
 - What happens if you run the server twice? Why the error?
 - Open Postman/Thunder Client - make a GET request
@@ -76,11 +85,13 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 - Think: Why do you have to manually restart? (Leads to nodemon later)
 
 ### Exercises
+
 - Add another endpoint: `GET /api/status` returning `{ status: "online" }`
 - Add a POST endpoint that accepts JSON body: `POST /api/echo` - return whatever was sent
 - Test: What happens if you send malformed JSON? See the error!
 
 ### Key Concepts to Understand
+
 - Middleware concept in Express (req, res, next)
 - How `app.get()` registers a route
 - What `req` and `res` objects contain
@@ -93,6 +104,7 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 **Goal:** Understand database connections and basic CRUD operations
 
 ### What to Build
+
 1. Install MongoDB locally (or use MongoDB Atlas free tier cloud)
 2. Use MongoDB Compass to create database: `real-estate-cms`
 3. Install `mongoose` and `dotenv`
@@ -101,6 +113,7 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 6. Connect in `server.js` before starting server
 
 ### Learning Checkpoints
+
 - What's a connection string? Break down: `mongodb://localhost:27017/dbname`
 - Why use `.env`? What's the security concern?
 - What's `mongoose.connect()` returning? (A Promise - async!)
@@ -108,6 +121,7 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 - Look at logs: when does connection happen vs when server starts?
 
 ### Next Step - First Model
+
 1. Create `models/Property.js`
 2. Define a Mongoose schema with these fields:
    - `address: { type: String, required: true }`
@@ -116,12 +130,14 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 3. Export the model
 
 ### Exercises
+
 - Research: What's a schema vs a model in Mongoose?
 - In MongoDB Compass, manually insert a property document in the `properties` collection
 - Open Node REPL, import your model, try `Property.find()` - see the data!
 - Think: Why does Mongoose pluralize "Property" to "properties"?
 
 ### Key Concepts
+
 - Schema validation (required, types, defaults)
 - Models are constructors for documents
 - Async operations: `.find()`, `.create()`, `.findById()` all return Promises
@@ -133,30 +149,36 @@ Admin User → Admin UI → REST API → MongoDB → REST API → Public Site �
 **Goal:** Connect all pieces - route → controller → model → database
 
 ### What to Build
+
 1. Create `routes/properties.js` with router
 2. Create `controllers/propertyController.js` with `getAllProperties` function
 3. Wire them together in `server.js`: `app.use('/api/properties', propertyRoutes)`
 4. Test: `GET /api/properties` should return data from database
 
 ### Learning Checkpoint - Trace The Flow
+
 Draw this flow and explain each step:
+
 ```
 Client request → Express server.js → Router → Controller → Mongoose Model → MongoDB → Back up the chain
 ```
 
 ### Then Add CREATE
+
 1. Add `POST /api/properties` route
 2. Create `createProperty` controller function
 3. Use `Property.create()` with data from `req.body`
 4. Test in Postman: Send JSON body to create a property
 
 ### Exercises
+
 - What happens if you don't send required fields? (Mongoose validation error!)
 - Try sending extra fields not in schema - what happens? (Mongoose ignores them)
 - Create property from Postman, verify in MongoDB Compass
 - Think: Should you return the created property? What status code? (201 vs 200)
 
 ### Debugging Practice
+
 - Intentionally break something (typo in field name)
 - Read the error stack trace - which line failed?
 - Use `console.log()` at each step to trace data flow
@@ -169,23 +191,27 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 **Goal:** Make your API robust - handle failures gracefully
 
 ### What to Learn
+
 - Try-catch blocks in async functions
 - Express error handling middleware
 - Validation before data reaches database
 
 ### What to Build
+
 1. Wrap controller logic in try-catch
 2. Create `middleware/errorHandler.js` - global error handler
 3. Research: What does `next(error)` do in Express?
 4. Install `express-validator` - add validation middleware to routes
 
 ### Exercises
+
 - Send invalid property data (missing price) - return meaningful error
 - Try to create property with negative price - add custom validator
 - Return proper status codes: 400 for validation, 500 for server errors
 - Test: Send malformed JSON - your error handler should catch it
 
 ### Think Through These Scenarios
+
 1. Database connection fails - how to handle?
 2. User sends string where you expect number - who catches this?
 3. Two validation errors at once - return all of them or just first?
@@ -198,12 +224,14 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 **Goal:** Understand security - passwords, tokens, protected routes
 
 ### Study First
+
 - What's hashing? Why never store plain passwords?
 - What's bcrypt? What's a "salt"?
 - What's a JWT? How is it different from sessions?
 - JWT structure: Header.Payload.Signature - decode one at jwt.io
 
 ### What to Build
+
 1. Create `models/User.js` with username and password (hashed!)
 2. Write a seed script: `seed.js` to create your admin user
    - Research bcrypt hashing: `bcrypt.hash(password, saltRounds)`
@@ -213,12 +241,14 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 6. Return token to client
 
 ### Learning Checkpoints
+
 - Hash the same password twice - are they identical? Why not?
 - Decode your JWT at jwt.io - see the payload, it's not encrypted!
 - Think: Where should you store JWT on frontend? (localStorage vs cookie debate)
 - Why does JWT have expiry? What happens when it expires?
 
 ### Then Protect Routes
+
 1. Create `middleware/auth.js`
 2. Extract token from `Authorization: Bearer <token>` header
 3. Verify token: `jwt.verify(token, secret)`
@@ -227,6 +257,7 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 6. Add middleware to routes: `router.post('/properties', auth, createProperty)`
 
 ### Exercises
+
 - Make authenticated request in Postman - add Authorization header
 - Try with wrong token - see 401 error
 - Try with expired token (set expiry to 1 second for testing)
@@ -239,12 +270,14 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 **Goal:** Handle multipart form data, manage files on disk
 
 ### Concepts to Understand
+
 - What's multipart/form-data? Why different from JSON?
 - Where do uploaded files go? How to serve them back?
 - File naming: why add timestamps? (Avoid collisions)
 - Security: validate file type and size - ALWAYS
 
 ### What to Build
+
 1. Install `multer`
 2. Create `config/multer.js` - configure storage location and filename strategy
 3. Create `POST /api/upload` endpoint with multer middleware
@@ -253,12 +286,14 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 6. Serve static files: `app.use('/uploads', express.static('uploads'))`
 
 ### Learning Journey
+
 - Send file from Postman (Body → form-data → choose file)
 - Check `uploads/` folder - see the saved file
 - Access in browser: `http://localhost:5000/uploads/filename.jpg`
 - Think: What if someone uploads a 1GB file? How do you limit it?
 
 ### Advanced Exercises
+
 - Add file type validation: only jpg, png, webp
 - Add file size limit: 5MB max
 - Handle multiple files at once
@@ -272,7 +307,9 @@ Client request → Express server.js → Router → Controller → Mongoose Mode
 **Goal:** Apply what you learned - repeat patterns for all models
 
 ### Now You Know The Pattern
+
 For each content type (Review, Service, About, Contact), repeat:
+
 1. Create model with appropriate schema
 2. Create controller with CRUD functions
 3. Create routes (protect with auth middleware where needed)
@@ -281,6 +318,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ### Content Type Schemas
 
 #### Property
+
 ```
 {
   image: String (required),
@@ -298,6 +336,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ```
 
 #### Review
+
 ```
 {
   name: String (required),
@@ -311,6 +350,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ```
 
 #### Service
+
 ```
 {
   title: String (required),
@@ -323,6 +363,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ```
 
 #### About (Singleton)
+
 ```
 {
   header: String (required),
@@ -333,6 +374,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ```
 
 #### Contact (Singleton)
+
 ```
 {
   email: String (required),
@@ -344,6 +386,7 @@ For each content type (Review, Service, About, Contact), repeat:
 ```
 
 ### Learning Focus
+
 - Notice the repetition? This is why frameworks/generators exist!
 - Think: Could you make a reusable `createCRUD()` function?
 - Singletons (About, Contact) are different - only PUT/GET, no DELETE
@@ -351,6 +394,7 @@ For each content type (Review, Service, About, Contact), repeat:
   - Think: How to ensure only ONE About document exists?
 
 ### Code Organization Exercise
+
 - You'll notice similar try-catch in every controller
 - You'll repeat validation logic
 - Think: How can you DRY (Don't Repeat Yourself) this up?
@@ -363,6 +407,7 @@ For each content type (Review, Service, About, Contact), repeat:
 **Goal:** Connect your React site to the API
 
 ### What to Build
+
 1. Create `src/services/api.js` - centralized fetch wrapper
 2. Handle CORS in backend: Install `cors` package
 3. Pick ONE component to convert first: Gallery.jsx
@@ -370,6 +415,7 @@ For each content type (Review, Service, About, Contact), repeat:
 5. Add loading state, error handling
 
 ### Learning Checkpoints
+
 - Make API call BEFORE backend has CORS - see the error!
 - Add CORS middleware - request succeeds
 - Research: What is CORS? Why does it exist? (Security)
@@ -378,12 +424,14 @@ For each content type (Review, Service, About, Contact), repeat:
 - Handle errors: What if API is down? Show error message
 
 ### Common Issues to Debug
+
 - CORS errors (most common!)
 - Forgetting `await` or `.then()` on fetch
 - Not handling loading state - UI breaks
 - Image paths wrong (need full URL now: `http://localhost:5000/uploads/...`)
 
 ### Exercises
+
 - Add environment variable for API URL
 - Create reusable `useApi()` custom hook
 - Add retry logic: If request fails, retry 3 times
@@ -396,13 +444,16 @@ For each content type (Review, Service, About, Contact), repeat:
 **Goal:** Build a separate React app for content management
 
 ### Architecture Decision
+
 Create `cms-admin/` as a standalone React app (separate from your public site) for these reasons:
+
 - Different concerns: Admin needs forms/tables, public site needs marketing design
 - Different users: Admin (you), public site (potential clients)
 - Independent deployment: Can secure admin behind VPN/firewall later
 - Easier to maintain: No mixing admin code with public code
 
 ### Setup
+
 1. Create new Vite React app: `npm create vite@latest cms-admin -- --template react`
 2. Install dependencies: `react-router-dom`, `axios`
 3. Setup routing structure:
@@ -418,6 +469,7 @@ Create `cms-admin/` as a standalone React app (separate from your public site) f
    ```
 
 ### Admin Folder Structure
+
 ```
 cms-admin/
 ├── src/
@@ -462,6 +514,7 @@ cms-admin/
 ### What to Build - Basic Version
 
 #### 1. Login Page
+
 - Form: username + password
 - Call `POST /api/auth/login`
 - Store JWT in localStorage
@@ -469,6 +522,7 @@ cms-admin/
 - Theme: Clean, professional (doesn't need to be fancy yet)
 
 #### 2. Layout Component
+
 - Sidebar navigation (links to all content types)
 - Top bar with "Logged in as Admin" + Logout button
 - Main content area
@@ -476,13 +530,15 @@ cms-admin/
 
 #### 3. Properties Management (Your First Full CRUD)
 
-**List View:** 
+**List View:**
+
 - Table showing all properties (address, price, actions)
 - Columns: Image thumbnail | Address | Price | Bedrooms | Bathrooms | Actions
 - Actions: Edit button | Delete button
 - Add "New Property" button at top
 
 **Create Form:**
+
 - Text inputs: address, price, sqft, link
 - Number inputs: bedrooms, bathrooms
 - Image upload: Click to choose file, show preview
@@ -492,6 +548,7 @@ cms-admin/
 - Error: Show error message below form
 
 **Edit Form:**
+
 - Same form, pre-filled with existing data
 - Load data: `GET /api/properties/:id`
 - Show current image with option to replace
@@ -499,23 +556,27 @@ cms-admin/
 - Cancel button returns to list
 
 **Delete:**
+
 - Confirmation modal: "Are you sure you want to delete this property?"
 - Yes → `DELETE /api/properties/:id` → remove from list
 - No → close modal
 
 #### 4. Protected Routes
+
 - Check if JWT exists in localStorage
 - If not, redirect to login
 - If exists, verify it's not expired (decode JWT client-side)
 - Use React Router's route protection pattern
 
 #### 5. Basic Error Handling
+
 - API errors show in red banner at top
 - Form validation errors show below fields
 - Success messages (green banner): "Property created successfully!"
 - Toast notifications for quick feedback
 
 ### Learning Focus for Basic Version
+
 - Form state management (controlled components)
 - How to handle file uploads in forms (FormData)
 - Why you need to send `multipart/form-data` for images
@@ -525,6 +586,7 @@ cms-admin/
 - Context API for global auth state
 
 ### Time Estimate
+
 1.5-2 weeks for clean basic version
 
 ---
@@ -536,6 +598,7 @@ cms-admin/
 ### Database Schema Additions (Add Now, Use Later)
 
 #### Fields to Include in Models:
+
 - **Order/Position:** `order: Number` in Service, Property, Review
   - Enables drag-drop reordering later
   - Default to creation order initially
@@ -554,20 +617,24 @@ cms-admin/
 ### Future Feature Roadmap
 
 #### 1. Drag-Drop Reordering (Add After Basic CRUD Works)
+
 **What it does:** Drag properties/services up/down to change display order
 
 **Libraries needed:**
+
 - `react-beautiful-dnd` or `@dnd-kit/core` (modern, better)
 
 **Implementation:**
+
 - Add grab handle icon to each row in list
 - On drop, calculate new order values
-- API endpoint: `PUT /api/properties/reorder` 
+- API endpoint: `PUT /api/properties/reorder`
   - Accepts array of IDs in new order
   - Updates all order fields in one transaction
 - Frontend updates optimistically
 
 **Backend change:**
+
 - Add `reorderProperties` controller function
 - Validate order array
 - Update multiple documents in single operation
@@ -575,9 +642,11 @@ cms-admin/
 **Time estimate:** 1 week
 
 #### 2. Draft/Publish System (After Reordering)
+
 **What it does:** Save content as draft, preview before publishing
 
 **Implementation:**
+
 - Add status dropdown to forms: "Draft" or "Published"
 - API filters: Public endpoints only return `status: 'published'`
 - Admin endpoints return all statuses
@@ -585,6 +654,7 @@ cms-admin/
 - Badge in list view showing draft status
 
 **Backend changes:**
+
 - Modify GET routes with query filter
 - Add `?includeAll=true` for admin requests
 - Preview endpoint: `GET /api/properties/:id?preview=true` (requires auth)
@@ -592,9 +662,11 @@ cms-admin/
 **Time estimate:** 3-4 days
 
 #### 3. Live Preview Mode (After Draft System)
+
 **What it does:** See draft content on public site before publishing
 
 **Implementation:**
+
 - Button in admin: "Preview on Site"
 - Opens public site in new tab/iframe with query param: `?preview=true`
 - Public site checks for preview mode
@@ -602,24 +674,29 @@ cms-admin/
 - Otherwise, only show published
 
 **Backend changes:**
+
 - Public endpoints check for preview token
 - If valid, return draft content
 - Otherwise, only published
 
 **Security consideration:**
+
 - Preview token should be short-lived (1 hour)
 - Different from regular JWT
 
 **Time estimate:** 1 week
 
 #### 4. Image Enhancement (After Preview)
+
 **What it does:** Preview, crop, or optimize images before upload
 
 **Libraries needed:**
+
 - `react-image-crop` - client-side cropping
 - `sharp` (backend) - image optimization/resizing
 
 **Implementation:**
+
 - Upload shows preview with crop tool
 - User adjusts crop before saving
 - Backend receives cropped image or crop coordinates
@@ -627,6 +704,7 @@ cms-admin/
 - Store multiple sizes, serve appropriate size
 
 **Backend changes:**
+
 - Multer processes image
 - Sharp creates resized versions
 - Save metadata: `{ original: url, thumbnail: url, medium: url }`
@@ -634,9 +712,11 @@ cms-admin/
 **Time estimate:** 1-1.5 weeks
 
 #### 5. Section Layout Editor (Most Complex - Add Last)
+
 **What it does:** Visual editor to reorder sections on homepage, toggle visibility
 
 **Concept:**
+
 - Current site has fixed sections: Hero → About → Gallery → Services → Reviews
 - Layout editor lets you:
   - Show/hide sections
@@ -644,6 +724,7 @@ cms-admin/
   - Configure section settings (background color, spacing, etc.)
 
 **Database approach:**
+
 - Create `Layout` model (singleton):
   ```
   {
@@ -657,6 +738,7 @@ cms-admin/
   ```
 
 **Implementation:**
+
 - Admin UI: List of sections with toggle switches and drag handles
 - Save layout to database
 - Public site fetches layout: `GET /api/layout`
@@ -664,11 +746,13 @@ cms-admin/
 - Each section component reads its config
 
 **Frontend changes (public site):**
+
 - Refactor App.jsx to render sections dynamically
 - Create section registry: `{ hero: <Hero />, about: <About />, ... }`
 - Map over layout array to render in order
 
 **Challenges:**
+
 - Section configuration complexity (each type has different settings)
 - Preview while editing (real-time updates)
 - Validation (ensure at least one section visible)
@@ -676,6 +760,7 @@ cms-admin/
 **Time estimate:** 2-3 weeks
 
 ### Suggested Implementation Order
+
 ```
 1. Basic CRUD (Phase 9A) → 2 weeks
    ↓
@@ -699,6 +784,7 @@ cms-admin/
 ### Test These Scenarios
 
 #### Backend Tests
+
 1. Database connection fails - does server start gracefully?
 2. Database disconnects mid-request - error handling works?
 3. Send 100 requests at once - does it handle load?
@@ -709,6 +795,7 @@ cms-admin/
 8. Malformed JSON in request body - caught by middleware?
 
 #### Frontend Tests (Admin UI)
+
 1. Backend down - does frontend handle gracefully?
 2. API returns 500 error - error message shows?
 3. Upload fails - shows error, doesn't break UI?
@@ -718,6 +805,7 @@ cms-admin/
 7. Network slow - loading states appear?
 
 #### Public Site Tests
+
 1. API down - shows fallback message?
 2. No properties in database - shows empty state?
 3. Image URL broken - placeholder shows?
@@ -726,6 +814,7 @@ cms-admin/
 ### Build Better Error Responses
 
 **API Response Format:**
+
 ```json
 {
   "success": false,
@@ -741,6 +830,7 @@ cms-admin/
 ```
 
 **Success Response Format:**
+
 ```json
 {
   "success": true,
@@ -752,33 +842,39 @@ cms-admin/
 ### Add Production-Ready Features
 
 #### 1. Logging
+
 - Install `morgan` for HTTP request logging
 - Install `winston` for application logging
 - Log errors to file in production
 - Log format: `[timestamp] [level] [message]`
 
 #### 2. Security Headers
+
 - Install `helmet` package
 - Protects against common vulnerabilities
 - Sets secure HTTP headers
 
 #### 3. Rate Limiting
+
 - Install `express-rate-limit`
 - Limit login attempts: 5 tries per 15 minutes
 - Limit upload endpoint: 10 uploads per hour
 - Prevent abuse/DDoS attacks
 
 #### 4. Input Sanitization
+
 - Install `express-mongo-sanitize`
 - Prevents NoSQL injection attacks
 - Sanitize user input before database queries
 
 #### 5. Request Validation
+
 - Use `express-validator` consistently
 - Validate all inputs (type, length, format)
 - Sanitize strings (trim, escape)
 
 ### Think Through
+
 - **Logging:** How to track errors in production? (Winston, Morgan)
 - **Monitoring:** How would you know if API is down? (Uptime monitoring)
 - **Performance:** Should you add caching? Redis for frequent queries?
@@ -796,6 +892,7 @@ cms-admin/
 #### Create `.env.example` Files
 
 **cms-backend/.env.example:**
+
 ```
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/real-estate-cms
@@ -808,16 +905,19 @@ UPLOAD_PATH=./uploads
 ```
 
 **cms-admin/.env.example:**
+
 ```
 VITE_API_URL=http://localhost:5000/api
 ```
 
 **real-estate-site/.env.example:**
+
 ```
 VITE_API_URL=http://localhost:5000/api
 ```
 
 #### Add to `.gitignore`
+
 ```
 .env
 .env.local
@@ -831,6 +931,7 @@ uploads/
 Create `API.md` documenting all endpoints:
 
 #### Format for each endpoint:
+
 ```
 ### POST /api/properties
 **Description:** Create a new property
@@ -865,6 +966,7 @@ Create `API.md` documenting all endpoints:
 ### Code Quality Checklist
 
 #### Backend
+
 - [ ] Consistent error handling in all controllers
 - [ ] All routes have proper authentication
 - [ ] Input validation on all endpoints
@@ -875,6 +977,7 @@ Create `API.md` documenting all endpoints:
 - [ ] Consistent response format
 
 #### Admin UI
+
 - [ ] Loading states on all async operations
 - [ ] Error messages user-friendly
 - [ ] Forms have validation feedback
@@ -884,6 +987,7 @@ Create `API.md` documenting all endpoints:
 - [ ] Consistent styling
 
 #### Public Site
+
 - [ ] Graceful degradation if API fails
 - [ ] Loading skeletons/placeholders
 - [ ] Optimistic updates where appropriate
@@ -893,10 +997,12 @@ Create `API.md` documenting all endpoints:
 ### README Files
 
 #### cms-backend/README.md
+
 ```markdown
 # Real Estate CMS - Backend API
 
 ## Setup
+
 1. Install MongoDB
 2. Copy `.env.example` to `.env`
 3. Update environment variables
@@ -905,14 +1011,17 @@ Create `API.md` documenting all endpoints:
 6. Start server: `npm run dev`
 
 ## Scripts
+
 - `npm run dev` - Start with nodemon (auto-reload)
 - `npm start` - Start production server
 - `node seed.js` - Create admin user
 
 ## API Endpoints
+
 See API.md for complete documentation
 
 ## Architecture
+
 - Models: Mongoose schemas
 - Controllers: Business logic
 - Routes: Endpoint definitions
@@ -920,10 +1029,12 @@ See API.md for complete documentation
 ```
 
 #### cms-admin/README.md
+
 ```markdown
 # Real Estate CMS - Admin Dashboard
 
 ## Setup
+
 1. Ensure backend is running
 2. Copy `.env.example` to `.env`
 3. Update API URL
@@ -931,10 +1042,12 @@ See API.md for complete documentation
 5. Run `npm run dev`
 
 ## Default Login
+
 - Username: admin
 - Password: (set during seed script)
 
 ## Features
+
 - Manage properties, reviews, services
 - Edit about/contact content
 - Upload images
@@ -945,8 +1058,9 @@ See API.md for complete documentation
 ### Deployment Preparation
 
 #### Backend Deployment Considerations
+
 - **Platform options:** Heroku, DigitalOcean, Render, AWS
-- **Database:** 
+- **Database:**
   - Local MongoDB → MongoDB Atlas (cloud)
   - Connection string in production .env
 - **File uploads:**
@@ -959,7 +1073,8 @@ See API.md for complete documentation
 - **Process manager:** PM2 to keep server running
 
 #### Frontend Deployment
-- **Admin UI:** 
+
+- **Admin UI:**
   - Build: `npm run build`
   - Deploy to Netlify, Vercel, or same server as backend
   - Secure behind VPN or IP whitelist (production)
@@ -975,6 +1090,7 @@ See API.md for complete documentation
 ### Using This as a Template for New Projects
 
 #### What Changes:
+
 1. **Models** - Define new content types for your project
    - Blog: Article, Category, Tag, Author
    - E-commerce: Product, Category, Order, Customer
@@ -992,6 +1108,7 @@ See API.md for complete documentation
    - Different data types
 
 #### What Stays the Same:
+
 1. **Authentication system** - JWT auth works for any project
 2. **File upload system** - Images are images
 3. **Error handling** - Same patterns
@@ -1002,6 +1119,7 @@ See API.md for complete documentation
 ### Reuse Strategy
 
 #### Step 1: Copy Project Structure
+
 ```bash
 cp -r cms-backend my-new-project-backend
 cd my-new-project-backend
@@ -1010,23 +1128,27 @@ rm -rf node_modules uploads
 ```
 
 #### Step 2: Replace Models
+
 ```bash
 rm -rf models/Property.js models/Review.js models/Service.js
 # Create new models for your content types
 ```
 
 #### Step 3: Update Controllers/Routes
+
 - Delete old controllers
 - Create new ones following same pattern
 - Update routes/index.js
 
 #### Step 4: Update Admin UI
+
 - Copy cms-admin structure
 - Update forms to match new models
 - Update API calls to new endpoints
 - Adjust navigation menu
 
 #### Time Saved: 40-60%
+
 - No need to rebuild auth, uploads, error handling, database setup
 - Focus only on content-specific logic
 - Proven patterns already in place
@@ -1035,24 +1157,25 @@ rm -rf models/Property.js models/Review.js models/Service.js
 
 ## Timeline Summary
 
-| Phase | Task | Time |
-|-------|------|------|
-| 0 | Study concepts | Self-paced |
-| 1 | Basic Express server | 3-4 days |
-| 2 | MongoDB connection + first model | 4-5 days |
-| 3 | First CRUD endpoint | 3-4 days |
-| 4 | Error handling + validation | 5-6 days |
-| 5 | Authentication (JWT) | 5-7 days |
-| 6 | File uploads | 5-7 days |
-| 7 | All content types | 5-7 days |
-| 8 | Frontend integration | 5-7 days |
-| 9A | Basic admin UI | 10-14 days |
-| 9B | Plan fancy features | 2-3 days |
-| 10 | Testing | 5-7 days |
-| 11 | Documentation + polish | 3-5 days |
-| **TOTAL** | **Complete functional CMS** | **~8 weeks** |
+| Phase     | Task                             | Time         |
+| --------- | -------------------------------- | ------------ |
+| 0         | Study concepts                   | Self-paced   |
+| 1         | Basic Express server             | 3-4 days     |
+| 2         | MongoDB connection + first model | 4-5 days     |
+| 3         | First CRUD endpoint              | 3-4 days     |
+| 4         | Error handling + validation      | 5-6 days     |
+| 5         | Authentication (JWT)             | 5-7 days     |
+| 6         | File uploads                     | 5-7 days     |
+| 7         | All content types                | 5-7 days     |
+| 8         | Frontend integration             | 5-7 days     |
+| 9A        | Basic admin UI                   | 10-14 days   |
+| 9B        | Plan fancy features              | 2-3 days     |
+| 10        | Testing                          | 5-7 days     |
+| 11        | Documentation + polish           | 3-5 days     |
+| **TOTAL** | **Complete functional CMS**      | **~8 weeks** |
 
 ### Post-Launch Features
+
 - Drag-drop reordering: +1 week
 - Draft/publish system: +3-4 days
 - Image enhancement: +1 week
@@ -1066,6 +1189,7 @@ rm -rf models/Property.js models/Review.js models/Service.js
 By the end of this project, you'll understand:
 
 ### Backend Development
+
 - ✅ REST API design and implementation
 - ✅ Express.js middleware and routing
 - ✅ MongoDB and Mongoose ODM
@@ -1076,6 +1200,7 @@ By the end of this project, you'll understand:
 - ✅ Security best practices
 
 ### Frontend Development
+
 - ✅ React with API integration
 - ✅ Form handling and validation
 - ✅ File upload UI
@@ -1085,6 +1210,7 @@ By the end of this project, you'll understand:
 - ✅ Custom hooks
 
 ### Architecture
+
 - ✅ Headless CMS concepts
 - ✅ Separation of concerns
 - ✅ RESTful API principles
@@ -1093,6 +1219,7 @@ By the end of this project, you'll understand:
 - ✅ Deployment considerations
 
 ### General Skills
+
 - ✅ Debugging techniques
 - ✅ Testing strategies
 - ✅ Documentation practices
@@ -1105,6 +1232,7 @@ By the end of this project, you'll understand:
 ## Resources & References
 
 ### Official Documentation
+
 - [Express.js Docs](https://expressjs.com/)
 - [Mongoose Docs](https://mongoosejs.com/)
 - [MongoDB Manual](https://docs.mongodb.com/)
@@ -1112,6 +1240,7 @@ By the end of this project, you'll understand:
 - [Node.js Docs](https://nodejs.org/docs/)
 
 ### Key Concepts to Research
+
 - REST API design principles
 - JWT authentication flow
 - HTTP status codes
@@ -1122,6 +1251,7 @@ By the end of this project, you'll understand:
 - FormData API (for file uploads)
 
 ### Tools
+
 - **Postman/Thunder Client** - API testing
 - **MongoDB Compass** - Database GUI
 - **VS Code** - Code editor with extensions:
@@ -1131,6 +1261,7 @@ By the end of this project, you'll understand:
   - MongoDB for VS Code
 
 ### Security Resources
+
 - OWASP Top 10
 - JWT.io (decode/debug tokens)
 - bcrypt documentation
@@ -1186,6 +1317,7 @@ By the end of this project, you'll understand:
 ## Notes & Best Practices
 
 ### Development Workflow
+
 1. **Test immediately** - Don't write 100 lines before testing
 2. **Commit often** - Small, focused commits with clear messages
 3. **Read errors carefully** - Stack traces tell you exactly what's wrong
@@ -1194,6 +1326,7 @@ By the end of this project, you'll understand:
 6. **Restart server after config changes** - .env, middleware order, etc.
 
 ### Code Quality
+
 - **Consistent naming:** camelCase for variables/functions, PascalCase for components/models
 - **Meaningful names:** `getUserById` not `getData`
 - **Single responsibility:** Each function does ONE thing
@@ -1201,6 +1334,7 @@ By the end of this project, you'll understand:
 - **Comment WHY not WHAT:** Code shows what, comments explain why
 
 ### Security Mindset
+
 - **Never trust user input** - Always validate and sanitize
 - **Never store plain passwords** - Always hash with bcrypt
 - **Never expose secrets** - Use .env, add to .gitignore
@@ -1208,6 +1342,7 @@ By the end of this project, you'll understand:
 - **Always use HTTPS in production** - Encrypt data in transit
 
 ### Performance Tips
+
 - **Pagination** - Don't load 1000 records at once
 - **Indexing** - Add database indexes on frequently queried fields
 - **Caching** - Consider Redis for frequently accessed data
@@ -1219,6 +1354,7 @@ By the end of this project, you'll understand:
 ## Next Steps After Completion
 
 ### Enhancements to Consider
+
 1. **Image optimization** - Automatic resizing, format conversion (WebP)
 2. **Search functionality** - Full-text search across properties
 3. **Filtering** - Sort/filter by price, bedrooms, etc.
@@ -1231,6 +1367,7 @@ By the end of this project, you'll understand:
 10. **Multi-language** - i18n support
 
 ### Career Development
+
 - Add to portfolio
 - Write blog post about what you learned
 - Create tutorial for others
@@ -1242,6 +1379,7 @@ By the end of this project, you'll understand:
 ## Final Thoughts
 
 **Remember:**
+
 - **It's okay to get stuck** - That's where learning happens
 - **Errors are teachers** - Read them, understand them, fix them
 - **Start simple** - Don't try to build everything at once
@@ -1250,6 +1388,7 @@ By the end of this project, you'll understand:
 - **Build, break, fix** - Debugging builds deep understanding
 
 **You're learning:**
+
 - Not just code, but how to think like a developer
 - Not just features, but architecture and patterns
 - Not just syntax, but problem-solving approaches
