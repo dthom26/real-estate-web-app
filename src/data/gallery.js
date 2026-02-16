@@ -1,15 +1,20 @@
+import baileyImage from "../assets/bailey-anselme-Bkp3gLygyeA-unsplash.jpg";
+import johnsonImage from "../assets/johnson-U6Q6zVDgmSs-unsplash.jpg";
+import sieuwertImage from "../assets/sieuwert-otterloo-aren8nutd1Q-unsplash.jpg";
+import toddImage from "../assets/todd-kent-178j8tJrNlc-unsplash.jpg";
+
 export const galleryImages = [
-  "/src/assets/bailey-anselme-Bkp3gLygyeA-unsplash.jpg",
-  "/src/assets/johnson-U6Q6zVDgmSs-unsplash.jpg",
-  "/src/assets/sieuwert-otterloo-aren8nutd1Q-unsplash.jpg",
-  "/src/assets/todd-kent-178j8tJrNlc-unsplash.jpg",
+  baileyImage,
+  johnsonImage,
+  sieuwertImage,
+  toddImage,
   // Add more image paths as needed
 ];
 
 export const galleryData = [
   {
     id: 1,
-    image: "/src/assets/bailey-anselme-Bkp3gLygyeA-unsplash.jpg",
+    image: baileyImage,
     alt: "Luxury Waterfront Estate",
     address: "456 Ocean View Drive, Malibu, CA 90265",
     price: "$2,850,000",
@@ -20,7 +25,7 @@ export const galleryData = [
   },
   {
     id: 2,
-    image: "/src/assets/johnson-U6Q6zVDgmSs-unsplash.jpg",
+    image: johnsonImage,
     alt: "Modern Downtown Condo",
     address: "789 Metropolitan Ave, Los Angeles, CA 90012",
     price: "$675,000",
@@ -31,7 +36,7 @@ export const galleryData = [
   },
   {
     id: 3,
-    image: "/src/assets/sieuwert-otterloo-aren8nutd1Q-unsplash.jpg",
+    image: sieuwertImage,
     alt: "Charming Suburban Home",
     address: "321 Maple Street, Pasadena, CA 91101",
     price: "$895,000",
@@ -42,7 +47,7 @@ export const galleryData = [
   },
   {
     id: 4,
-    image: "/src/assets/todd-kent-178j8tJrNlc-unsplash.jpg",
+    image: toddImage,
     alt: "Contemporary Family Residence",
     // address intentionally missing to test optional fields
     price: "$1,250,000",
