@@ -1,27 +1,27 @@
 import reviewRepository from "../repositories/reviewRepository.js";
 
 // Get all reviews
-export const getAllReviews = async (req, res) => {
+export const getAllReviews = async (req, res, next) => {
   try {
     const reviews = await reviewRepository.findAll();
     res.json(reviews);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch reviews" });
+    next(error);
   }
 };
 
 // Create new review
-export const createReview = async (req, res) => {
+export const createReview = async (req, res, next) => {
   try {
     const newReview = await reviewRepository.create(req.body);
     res.status(201).json(newReview);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create review" });
+    next(error);
   }
 };
 
 // Update review
-export const updateReview = async (req, res) => {
+export const updateReview = async (req, res, next) => {
   try {
     const updatedReview = await reviewRepository.updateById(
       req.params.id,
@@ -32,12 +32,12 @@ export const updateReview = async (req, res) => {
     }
     res.json(updatedReview);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update review" });
+    next(error);
   }
 };
 
 // Delete review
-export const deleteReview = async (req, res) => {
+export const deleteReview = async (req, res, next) => {
   try {
     const deletedReview = await reviewRepository.deleteById(req.params.id);
     if (!deletedReview) {
@@ -45,12 +45,12 @@ export const deleteReview = async (req, res) => {
     }
     res.json({ message: "Review deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete review" });
+    next(error);
   }
 };
 
 // Get review by id
-export const getReviewById = async (req, res) => {
+export const getReviewById = async (req, res, next) => {
   try {
     const review = await reviewRepository.findById(req.params.id);
     if (!review) {
@@ -58,6 +58,6 @@ export const getReviewById = async (req, res) => {
     }
     res.json(review);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch review" });
+    next(error);
   }
 };

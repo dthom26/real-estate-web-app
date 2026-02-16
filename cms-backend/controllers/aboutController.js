@@ -1,7 +1,7 @@
 import aboutRepository from "../repositories/aboutRepository.js";
 
 // GET - get the single about document
-export const getAboutInfo = async (req, res) => {
+export const getAboutInfo = async (req, res, next) => {
     try {
         const aboutData = await aboutRepository.get();
         if (!aboutData) {
@@ -9,15 +9,15 @@ export const getAboutInfo = async (req, res) => {
         }
         res.json(aboutData);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch About Me data' });
+        next(error);
     }
 };
 // PUT - update the about doc
-export const updateAboutInfo = async (req, res) => {
+export const updateAboutInfo = async (req, res, next) => {
     try {
         const updatedData = await aboutRepository.update(req.body);
         res.json(updatedData); 
     } catch (error) {
-         res.status(500).json({ error: 'Failed to update About Me data' })
+        next(error);
     }
 };

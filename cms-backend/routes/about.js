@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAboutInfo, updateAboutInfo } from '../controllers/aboutController.js';
+import { aboutValidation, handleValidationErrors } from '../middleware/validators/aboutValidator.js';
 
 const router = express.Router();
 
@@ -7,6 +8,6 @@ const router = express.Router();
 router.get('/', getAboutInfo);
 
 // PUT /api/about - Update the about info
-router.put('/', updateAboutInfo);
+router.put('/', aboutValidation, handleValidationErrors, updateAboutInfo);
 
 export default router;

@@ -2,54 +2,30 @@ import Service from "../models/service.js";
 
 class ServiceRepository {
   async findAll(filter = {}) {
-    try {
-      return await Service.find(filter);
-    } catch (error) {
-      throw new Error(`Error fetching services: ${error.message}`);
-    }
+    return await Service.find(filter);
   }
 
   async create(data) {
-    try {
-      return await Service.create(data);
-    } catch (error) {
-      throw new Error(`Error creating service: ${error.message}`);
-    }
+    return await Service.create(data);
   }
 
   async findById(id) {
-    try {
-      return await Service.findById(id);
-    } catch (error) {
-      throw new Error(`Error fetching service by ID: ${error.message}`);
-    }
+    return await Service.findById(id);
   }
 
   async updateById(id, data) {
-    try {
-      return await Service.findByIdAndUpdate(id, data, {
-        new: true,
-        runValidators: true,
-      });
-    } catch (error) {
-      throw new Error(`Error updating service: ${error.message}`);
-    }
+    return await Service.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
   }
 
   async count(filter = {}) {
-    try {
-      return await Service.countDocuments(filter);
-    } catch (error) {
-      throw new Error(`Error counting services: ${error.message}`);
-    }
+    return await Service.countDocuments(filter);
   }
 
   async deleteById(id) {
-    try {
-      return await Service.findByIdAndDelete(id);
-    } catch (error) {
-      throw new Error(`Error deleting service: ${error.message}`);
-    }
+    return await Service.findByIdAndDelete(id);
   }
 }
 

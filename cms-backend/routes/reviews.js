@@ -6,6 +6,10 @@ import {
   updateReview,
   deleteReview,
 } from "../controllers/reviewController.js";
+import {
+  reviewValidation,
+  handleValidationErrors,
+} from "../middleware/validators/reviewValidator.js";
 
 const router = express.Router();
 
@@ -13,13 +17,13 @@ const router = express.Router();
 router.get("/", getAllReviews);
 
 // POST /api/reviews - Create new review
-router.post("/", createReview);
+router.post("/", reviewValidation, handleValidationErrors, createReview);
 
 // GET /api/reviews/:id - Get single review by ID
 router.get("/:id", getReviewById);
 
 // PUT /api/reviews/:id - Update review by ID
-router.put("/:id", updateReview);
+router.put("/:id", reviewValidation, handleValidationErrors, updateReview);
 
 // DELETE /api/reviews/:id - Delete review by ID
 router.delete("/:id", deleteReview);

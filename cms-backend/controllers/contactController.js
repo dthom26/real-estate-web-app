@@ -1,7 +1,7 @@
 import contactRepository from "../repositories/contactRepository.js";
 
 // GET - get the single contact document
-export const getContact = async (req, res) => {
+export const getContact = async (req, res, next) => {
   try {
     const contactData = await contactRepository.get();
     if (!contactData) {
@@ -9,16 +9,16 @@ export const getContact = async (req, res) => {
     }
     res.json(contactData);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch contact info" });
+    next(error);
   }
 };
 
 // PUT - update the contact doc
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
   try {
     const updatedData = await contactRepository.update(req.body);
     res.json(updatedData);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update contact info" });
+    next(error);
   }
 };

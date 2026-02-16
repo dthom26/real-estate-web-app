@@ -6,6 +6,7 @@ import aboutRoutes from "./routes/about.js";
 import reviewRoutes from "./routes/reviews.js";
 import serviceRoutes from "./routes/services.js";
 import contactRoutes from "./routes/contact.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -19,13 +20,13 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/contact", contactRoutes);
 
+
 app.get("/", (req, res) => {
   res.send("API is running!");
 });
 
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello World" });
-});
+// Error handling middleware
+app.use(errorHandler);
 
 // Connect to database first, then start server
 connectDB()

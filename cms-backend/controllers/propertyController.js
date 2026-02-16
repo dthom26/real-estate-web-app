@@ -1,25 +1,25 @@
 import propertyRepository from '../repositories/propertyRepository.js';
 
 // get all properties
-export const getAllProperties = async (req, res) => {
+export const getAllProperties = async (req, res, next) => {
   try {
     const properties = await propertyRepository.findAll();
     res.json(properties);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch properties' });
+    next(error);
   }
 };
 // create new property
-export const createProperty = async (req, res) => {
+export const createProperty = async (req, res, next) => {
   try {
     const newProperty = await propertyRepository.create(req.body);
     res.status(201).json(newProperty);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create property' });
+    next(error);
   }
 };
 // update property
-export const updateProperty = async (req, res) => {
+export const updateProperty = async (req, res, next) => {
   try {
     const updatedProperty = await propertyRepository.updateById(req.params.id, req.body);
     if (!updatedProperty) {
@@ -27,11 +27,11 @@ export const updateProperty = async (req, res) => {
     }
     res.json(updatedProperty);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update property' });
+    next(error);
   }
 };
 // delete property
-export const deleteProperty = async (req, res) => {
+export const deleteProperty = async (req, res, next) => {
   try {
     const deletedProperty = await propertyRepository.deleteById(req.params.id);
     if (!deletedProperty) {
@@ -39,11 +39,11 @@ export const deleteProperty = async (req, res) => {
     }
     res.json({ message: 'Property deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete property' });
+    next(error);
   }
 };
 // get property by id
-export const getPropertyById = async (req, res) => {
+export const getPropertyById = async (req, res, next) => {
   try {
     const property = await propertyRepository.findById(req.params.id);
     if (!property) {
@@ -51,6 +51,6 @@ export const getPropertyById = async (req, res) => {
     }
     res.json(property);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch property' });
+    next(error);
   }
 };  

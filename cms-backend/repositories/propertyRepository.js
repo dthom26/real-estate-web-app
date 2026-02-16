@@ -2,51 +2,27 @@ import property from "../models/property.js";
 
 class PropertyRepository {
   async findAll(filter = {}) {
-    try {
-      return await property.find(filter);
-    } catch (error) {
-      throw new Error(`Error fetching properties: ${error.message}`);
-    }
+    return await property.find(filter);
   }
-  // Create new property
+
   async create(data) {
-    try {
-      return await property.create(data);
-    } catch (error) {
-      throw new Error(`Error creating property: ${error.message}`);
-    }
+    return await property.create(data);
   }
-  // Find a property by ID
+
   async findById(id) {
-    try {
-      return await property.findById(id);
-    } catch (error) {
-      throw new Error(`Error fetching property by ID: ${error.message}`);
-    }
+    return await property.findById(id);
   }
-  // Update a property by ID
+
   async updateById(id, data) {
-    try {
-      return await property.findByIdAndUpdate(id, data, { new: true });
-    } catch (error) {
-      throw new Error(`Error updating property: ${error.message}`);
-    }
+    return await property.findByIdAndUpdate(id, data, { new: true });
   }
-  // count properties
+
   async count(filter = {}) {
-    try {
-      return await property.countDocuments(filter);
-    } catch (error) {
-      throw new Error(`Error counting properties: ${error.message}`);
-    }
+    return await property.countDocuments(filter);
   }
-  // delete a property by ID
+
   async deleteById(id) {
-    try {
-      return await property.findByIdAndDelete(id);
-    } catch (error) {
-      throw new Error(`Error deleting property: ${error.message}`);
-    }
+    return await property.findByIdAndDelete(id);
   }
 }
 

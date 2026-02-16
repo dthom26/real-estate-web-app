@@ -1,27 +1,27 @@
 import serviceRepository from "../repositories/serviceRepository.js";
 
 // Get all services
-export const getAllServices = async (req, res) => {
+export const getAllServices = async (req, res, next) => {
   try {
     const services = await serviceRepository.findAll();
     res.json(services);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch services" });
+    next(error);
   }
 };
 
 // Create new service
-export const createService = async (req, res) => {
+export const createService = async (req, res, next) => {
   try {
     const newService = await serviceRepository.create(req.body);
     res.status(201).json(newService);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create service" });
+    next(error);
   }
 };
 
 // Update service
-export const updateService = async (req, res) => {
+export const updateService = async (req, res, next) => {
   try {
     const updatedService = await serviceRepository.updateById(
       req.params.id,
@@ -32,12 +32,12 @@ export const updateService = async (req, res) => {
     }
     res.json(updatedService);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update service" });
+    next(error);
   }
 };
 
 // Delete service
-export const deleteService = async (req, res) => {
+export const deleteService = async (req, res, next) => {
   try {
     const deletedService = await serviceRepository.deleteById(req.params.id);
     if (!deletedService) {
@@ -45,12 +45,12 @@ export const deleteService = async (req, res) => {
     }
     res.json({ message: "Service deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete service" });
+    next(error);
   }
 };
 
 // Get service by id
-export const getServiceById = async (req, res) => {
+export const getServiceById = async (req, res, next) => {
   try {
     const service = await serviceRepository.findById(req.params.id);
     if (!service) {
@@ -58,6 +58,6 @@ export const getServiceById = async (req, res) => {
     }
     res.json(service);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch service" });
+    next(error);
   }
 };
