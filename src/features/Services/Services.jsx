@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Services.module.css";
-import { servicesData } from "../../data/services";
+import { useServices } from "../../hooks/useServices";
 import BaseCard from "../../components/BaseCard/BaseCard";
 
 export default function Services() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
+  const {data, loading, error} = useServices();
+
+  
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,11 +33,14 @@ export default function Services() {
     };
   }, []);
 
+  if (loading) return null;
+  if (error) return null;
+  
   return (
     <section ref={sectionRef} className={`${styles.servicesSection} section`}>
       <h2 className={isVisible ? styles.fadeInUp : ""}>Our Services</h2>
       <div className={styles.servicesGrid}>
-        {servicesData.map((service, idx) => (
+        {data.map((service, idx) => (
           <BaseCard
             key={idx}
             variant="elevated"

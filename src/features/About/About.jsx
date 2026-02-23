@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./About.module.css";
-import { aboutData } from "../../data/about";
+import { useAbout } from "../../hooks/useAbout";
 import TextImageSection from "../../components/TextImageSection/TextImageSection";
 
 export default function About() {
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const {data, loading, error} = useAbout();
+  
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -28,7 +30,10 @@ export default function About() {
         observer.unobserve(sectionRef.current);
       }
     };
-  }, []);
+  }, [loading]);
+
+  if (loading) return null;
+  if (error) return null;
 
   return (
     <section
@@ -40,17 +45,17 @@ export default function About() {
       <TextImageSection imageFirst={false}>
         <div className={styles.imageWrapper}>
           <TextImageSection.Image
-            src={aboutData.image}
-            alt={aboutData.header}
+            src={data.image}
+            alt={data.header}
           />
         </div>
         <div className={styles.contentWrapper}>
           <TextImageSection.Content>
             <TextImageSection.Header>
-              {aboutData.header}
+              {data.header}
             </TextImageSection.Header>
             <TextImageSection.TextContent>
-              {aboutData.textContent}
+              {data.textContent}
             </TextImageSection.TextContent>
             <TextImageSection.Actions>
               <button>Learn More</button>

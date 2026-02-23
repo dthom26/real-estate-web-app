@@ -24,6 +24,13 @@ class PropertyRepository {
   async deleteById(id) {
     return await property.findByIdAndDelete(id);
   }
+  async findFeatured({limit = 5} = {}) {
+    return await property.find({ featured: true, status: 'published' })
+  .sort({ featuredOrder: 1 })
+  .limit(limit)
+  .select('_id image alt address price bedrooms bathrooms sqft link featuredImage featuredOrder')
+  .lean();
+  }
 }
 
 export default new PropertyRepository();

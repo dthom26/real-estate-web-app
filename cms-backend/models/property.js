@@ -11,8 +11,11 @@ const PropertySchema = new Schema(
     bedrooms: { type: Number, required: false },
     bathrooms: { type: Number, required: false },
     sqft: { type: String, required: false },
-    link: { type: String, required: true },
+    link: { type: String, required: false },
     order: { type: Number, default: 0 },
+    featured: { type: Boolean, default: false },
+    featuredOrder: { type: Number, default: 0 },
+    featuredImage: { type: String, required: false },
     status: {
       type: String,
       enum: ["draft", "published"],

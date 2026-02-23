@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import BaseCard from "../../components/BaseCard/BaseCard";
 import styles from "./GalleryCarousel.module.css";
-import { galleryImages } from "../../data/gallery";
+import { useCarousel } from "../../hooks/useCarousel";
 
 export default function GalleryCarousel() {
   const [current, setCurrent] = useState(0);
-  const total = galleryImages.length;
+  const { data: galleryData = [] } = useCarousel(5);
+  const items = galleryData || [];
+  const total = items.length || 0;
 
   const goPrev = () =>
     setCurrent((prev) => (prev === 0 ? total - 1 : prev - 1));
@@ -20,7 +22,11 @@ export default function GalleryCarousel() {
         <div className={styles.cardWrapper}>
           <BaseCard className={styles.galleryCard} variant="elevated" clickable>
             <div className={styles.imageShadowBorder}>
-              <BaseCard.Image src={galleryImages[current]} cover />
+              {(() => {
+                const item = items[current];
+                const src = item ? item.image || item : undefined;
+                return <BaseCard.Image src={src} cover />;
+              })()}
             </div>
           </BaseCard>
         </div>

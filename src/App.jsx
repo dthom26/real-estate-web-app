@@ -25,13 +25,9 @@ function App() {
 import "./app/global.css";
 import "./app/theme.css";
 import About from "./features/About/About";
-import Services from "./features/Services/Services";
-import Gallery from "./features/Gallery/Gallery";
 import Contact from "./features/Contact/Contact";
 import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header";
 import Hero from "./features/Hero/Hero";
-import GalleryCarousel from "./features/Gallery/GalleryCarousel";
 import GalleryCarousel3D from "./features/Gallery/GalleryCarousel3D";
 // 🎓 NEW COMPONENTS - Uncomment the imports below when you're ready to use them!
 import ServicesHero from "./features/ServicesHero/ServicesHero";

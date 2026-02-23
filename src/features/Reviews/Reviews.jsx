@@ -1,13 +1,19 @@
 import { useState } from "react";
 import style from "./Reviews.module.css";
 import BaseCard from "../../components/BaseCard/BaseCard";
-import reviewsData from "../../data/reviews";
+import { useReviews } from "../../hooks/useReviews.js";
 
 const Reviews = () => {
+  const { data, loading, error } = useReviews();
   const [current, setCurrent] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [direction, setDirection] = useState(null); // 'left' or 'right'
-  const total = reviewsData.length;
+
+  const items = data || [];
+  const total = items.length;
+  
+  if (loading) return null;
+  if (error) return null;
 
   // handle function for next review
   const goToNext = () => {
@@ -55,8 +61,8 @@ const Reviews = () => {
             (direction === "right" ? " " + style.slideOutRight : "")
           }
         >
-          <BaseCard.Body>{`"${reviewsData[current].comment}"`}</BaseCard.Body>
-          <BaseCard.Title as="h3">{reviewsData[current].name}</BaseCard.Title>
+          <BaseCard.Body>{`"${data[current].comment}"`}</BaseCard.Body>
+          <BaseCard.Title as="h3">{data[current].name}</BaseCard.Title>
         </BaseCard>
         <button
           onClick={goToNext}
@@ -68,7 +74,7 @@ const Reviews = () => {
         </button>
         <div className={style.navigation}></div>
         <div className={style.pagination}>
-          {reviewsData.map((_, idx) => (
+          {data.map((_, idx) => (
             <button
               key={idx}
               className={

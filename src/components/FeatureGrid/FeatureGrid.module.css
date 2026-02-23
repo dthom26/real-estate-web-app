@@ -47,7 +47,7 @@
   justify-content: center;
   text-decoration: none; /* For when it's a link */
   color: inherit;
-  
+
   /* Initial state for animation */
   opacity: 0;
   transform: translateY(40px);
@@ -89,8 +89,8 @@
 }
 
 /* HOVER EFFECT: Subtle zoom and blur on background */
-.interactive:hover .imageBackground,
-.interactive:focus .imageBackground {
+.featureItem:hover .imageBackground,
+.featureItem:focus .imageBackground {
   transform: scale(1.05); /* Slight zoom */
   filter: blur(2px); /* Slight blur for depth */
 }
@@ -117,8 +117,8 @@
 }
 
 /* HOVER EFFECT: Darken overlay slightly */
-.interactive:hover .overlay,
-.interactive:focus .overlay {
+.featureItem:hover .overlay,
+.featureItem:focus .overlay {
   background: rgba(0, 0, 0, 0.5); /* 50% black overlay */
 }
 
@@ -153,8 +153,8 @@
 }
 
 /* HOVER EFFECT: Slight lift on title */
-.interactive:hover .title,
-.interactive:focus .title {
+.featureItem:hover .title,
+.featureItem:focus .title {
   transform: translateY(-4px);
 }
 

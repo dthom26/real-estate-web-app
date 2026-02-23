@@ -1,8 +1,13 @@
 import React from "react";
 import styles from "./Contact.module.css";
-import { contactInfo } from "../../data/contact";
+import { useContact } from "../../hooks/useContact";
 
 export default function Contact() {
+  const { data: contactInfo, loading, error } = useContact();
+
+  if (loading) return null;
+  if (error) return null;
+
   return (
     <section className={styles.contactSection}>
       <div className={styles.overlay}>
