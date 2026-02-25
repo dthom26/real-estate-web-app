@@ -1057,6 +1057,20 @@ See API.md for complete documentation
 
 ### Deployment Preparation
 
+#### ⚠️ Pre-Deployment Security Checklist (must do before going live)
+
+These are intentionally left as placeholder values during development and are safe that way — the backend is only accessible locally. Change them **before deploying to any public server**:
+
+- [ ] **Generate a real `JWT_SECRET`** — replace `your_jwt_secret_key` in `.env.production.local` with a long random string:
+  ```bash
+  node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+  ```
+- [ ] **Change `ADMIN_PASSWORD`** — update it in `.env.production.local` to a strong unique password, then re-run `node seedAdmin.js` to reseed the DB user with the new hash
+- [ ] **Change `ADMIN_USERNAME`** — optionally change from the default `admin` to something less guessable
+- [ ] **Rotate `JWT_COOKIE_NAME`** — optionally rename from the default so it's not predictable
+- [ ] Ensure `NODE_ENV=production` so cookies are set with `Secure: true`
+- [ ] Audit `ALLOWED_ORIGINS` — only list the exact production frontend URL(s)
+
 #### Backend Deployment Considerations
 
 - **Platform options:** Heroku, DigitalOcean, Render, AWS
@@ -1069,7 +1083,7 @@ See API.md for complete documentation
 - **Environment:**
   - Set `NODE_ENV=production`
   - Use production MongoDB URI
-  - Secure JWT_SECRET (long random string)
+  - Secure JWT_SECRET (long random string, see checklist above)
 - **Process manager:** PM2 to keep server running
 
 #### Frontend Deployment
