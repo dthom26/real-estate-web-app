@@ -1,0 +1,29 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%);
+  padding: 24px;
+}
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.08);
+  padding: 28px;
+}
+.title {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: #0f172a;
+}
+.form {
+  margin-top: 6px;
+}
+.actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
