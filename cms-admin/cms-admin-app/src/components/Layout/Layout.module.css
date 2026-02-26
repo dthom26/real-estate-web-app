@@ -1,0 +1,18 @@
+.layout{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}   
+
+.body{
+    display: flex;
+    flex: 1;
+}
+
+.main{
+    flex: 1;                 /* take remaining horizontal space */
+    min-height: 0;           /* allow child to scroll inside flex container */
+    overflow-y: auto;        /* make the main area scrollable vertically */
+    padding: clamp(12px, 2.5vw, 32px); /* spacing inside the content area */
+    box-sizing: border-box;  /* include padding in size calculations */
+}
