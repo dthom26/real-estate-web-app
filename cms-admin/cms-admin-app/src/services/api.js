@@ -72,6 +72,42 @@ export function del(path, opts) {
 export const tokenStore = tokenProvider;
 
 // ========================================
+// Upload helper for file uploads
+// ========================================
+
+export async function uploadImage(file, opts = {}) {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const token = tokenProvider.get();
+  const csrf = readCookie("csrfToken");
+
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (csrf) headers["X-CSRF-Token"] = csrf;
+
+  const res = await fetch(BASE + "/api/upload", {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: formData,
+    signal: opts.signal,
+  });
+
+  const json = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const msg =
+      json?.error?.message || json?.message || `Upload failed: ${res.status}`;
+    const err = new Error(msg);
+    err.status = res.status;
+    throw err;
+  }
+
+  return json?.data ?? json;
+}
+
+// ========================================
 // Resource-specific API helpers
 // ========================================
 
