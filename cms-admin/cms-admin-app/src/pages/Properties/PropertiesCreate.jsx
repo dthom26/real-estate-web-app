@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-import { usePropertyForm } from '../../hooks/usePropertyForm';
-import styles from './PropertiesCreate.module.css';
+import { useNavigate } from "react-router-dom";
+import { usePropertyForm } from "../../hooks/usePropertyForm";
+import styles from "./PropertiesCreate.module.css";
 
 export default function PropertiesCreate() {
   const navigate = useNavigate();
-  
+
   // All form logic is now in the custom hook!
   const {
     formData,
@@ -23,7 +23,7 @@ export default function PropertiesCreate() {
         <h1>Create New Property</h1>
         <button
           type="button"
-          onClick={() => navigate('/admin/properties')}
+          onClick={() => navigate("/admin/properties")}
           className={styles.cancelButton}
         >
           Cancel
@@ -190,7 +190,9 @@ export default function PropertiesCreate() {
               />
               <span>Feature on Homepage</span>
             </label>
-            <small>When checked, this property will appear in the homepage carousel</small>
+            <small>
+              When checked, this property will appear in the homepage carousel
+            </small>
           </div>
         </section>
 
@@ -198,7 +200,7 @@ export default function PropertiesCreate() {
         <div className={styles.actions}>
           <button
             type="button"
-            onClick={() => navigate('/admin/properties')}
+            onClick={() => navigate("/admin/properties")}
             className={styles.cancelButton}
           >
             Cancel
@@ -208,7 +210,7 @@ export default function PropertiesCreate() {
             disabled={isSubmitting}
             className={styles.submitButton}
           >
-            {isSubmitting ? 'Creating...' : 'Create Property'}
+            {isSubmitting ? "Creating..." : "Create Property"}
           </button>
         </div>
       </form>
