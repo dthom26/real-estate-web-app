@@ -21,7 +21,7 @@ function readCookie(name) {
 
 async function request(
   path,
-  { method = "GET", body, headers = {}, signal } = {},
+  { method = "GET", body, headers = {}, signal, _isRetry = false } = {},
 ) {
   const opts = {
     method,
@@ -43,6 +43,34 @@ async function request(
 
   const res = await fetch(BASE + path, opts);
   const json = await res.json().catch(() => null);
+
+  // If we get a 401 and haven't retried yet, try to refresh the token
+  if (res.status === 401 && !_isRetry && path !== "/api/auth/refresh") {
+    try {
+      // Try to refresh the token
+      const refreshRes = await fetch(BASE + "/api/auth/refresh", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (refreshRes.ok) {
+        const refreshData = await refreshRes.json();
+        const newToken = refreshData?.data?.accessToken || refreshData?.accessToken;
+        
+        if (newToken) {
+          // Store the new token
+          tokenProvider.set(newToken);
+          
+          // Retry the original request with the new token
+          return request(path, { method, body, headers, signal, _isRetry: true });
+        }
+      }
+    } catch (refreshError) {
+      console.error("Token refresh failed:", refreshError);
+      // Fall through to throw the original error
+    }
+  }
 
   if (!res.ok) {
     const msg =
@@ -126,4 +154,38 @@ export function updateProperty(id, data, opts) {
 }
 export function deleteProperty(id, opts) {
   return del(`/api/properties/${id}`, opts);
+}
+
+// Reviews
+export function getReviews(opts) {
+  return get("/api/reviews", opts);
+}
+export function getReview(id, opts) {
+  return get(`/api/reviews/${id}`, opts);
+}
+export function createReview(data, opts) {
+  return post("/api/reviews", data, opts);
+}
+export function updateReview(id, data, opts) {
+  return put(`/api/reviews/${id}`, data, opts);
+}
+export function deleteReview(id, opts) {
+  return del(`/api/reviews/${id}`, opts);
+}
+
+// Services
+export function getServices(opts) {
+  return get("/api/services", opts);
+}
+export function getService(id, opts) {
+  return get(`/api/services/${id}`, opts);
+}
+export function createService(data, opts) {
+  return post("/api/services", data, opts);
+}
+export function updateService(id, data, opts) {
+  return put(`/api/services/${id}`, data, opts);
+}
+export function deleteService(id, opts) {
+  return del(`/api/services/${id}`, opts);
 }
