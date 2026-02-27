@@ -56,14 +56,21 @@ async function request(
 
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
-        const newToken = refreshData?.data?.accessToken || refreshData?.accessToken;
-        
+        const newToken =
+          refreshData?.data?.accessToken || refreshData?.accessToken;
+
         if (newToken) {
           // Store the new token
           tokenProvider.set(newToken);
-          
+
           // Retry the original request with the new token
-          return request(path, { method, body, headers, signal, _isRetry: true });
+          return request(path, {
+            method,
+            body,
+            headers,
+            signal,
+            _isRetry: true,
+          });
         }
       }
     } catch (refreshError) {
