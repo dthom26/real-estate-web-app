@@ -5,6 +5,7 @@ import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import PropertiesList from "./pages/Properties/PropertiesList";
 import PropertiesCreate from "./pages/Properties/PropertiesCreate";
+import PropertyEdit from "./pages/Properties/PropertyEdit";
 import Reviews from "./pages/Reviews/Reviews";
 import Services from "./pages/Services/Services";
 import Content from "./pages/Content/Content";
@@ -31,6 +32,7 @@ function App() {
               path="/admin/properties/create"
               element={<PropertiesCreate />}
             />
+            <Route path="/admin/properties/:id/edit" element={<PropertyEdit />} />
             <Route path="/admin/reviews" element={<Reviews />} />
             <Route path="/admin/services" element={<Services />} />
             <Route path="/admin/content" element={<Content />} />
