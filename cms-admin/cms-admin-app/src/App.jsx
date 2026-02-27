@@ -7,7 +7,11 @@ import PropertiesList from "./pages/Properties/PropertiesList";
 import PropertiesCreate from "./pages/Properties/PropertiesCreate";
 import PropertyEdit from "./pages/Properties/PropertyEdit";
 import Reviews from "./pages/Reviews/Reviews";
+import ReviewsCreate from "./pages/Reviews/ReviewsCreate";
+import ReviewEdit from "./pages/Reviews/ReviewEdit";
 import Services from "./pages/Services/Services";
+import ServicesCreate from "./pages/Services/ServicesCreate";
+import ServiceEdit from "./pages/Services/ServiceEdit";
 import Content from "./pages/Content/Content";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
@@ -32,9 +36,16 @@ function App() {
               path="/admin/properties/create"
               element={<PropertiesCreate />}
             />
-            <Route path="/admin/properties/:id/edit" element={<PropertyEdit />} />
+            <Route
+              path="/admin/properties/:id/edit"
+              element={<PropertyEdit />}
+            />
             <Route path="/admin/reviews" element={<Reviews />} />
+            <Route path="/admin/reviews/create" element={<ReviewsCreate />} />
+            <Route path="/admin/reviews/:id/edit" element={<ReviewEdit />} />
             <Route path="/admin/services" element={<Services />} />
+            <Route path="/admin/services/create" element={<ServicesCreate />} />
+            <Route path="/admin/services/:id/edit" element={<ServiceEdit />} />
             <Route path="/admin/content" element={<Content />} />
           </Route>
           <Route path="/" element={<Navigate to="/admin" replace />} />

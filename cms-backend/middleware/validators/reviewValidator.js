@@ -12,8 +12,9 @@ export const reviewValidation = [
     .withMessage("Name must be less than 100 characters"),
 
   body("title")
-    .optional()
     .trim()
+    .notEmpty()
+    .withMessage("Title is required")
     .isString()
     .withMessage("Title must be a string")
     .isLength({ max: 200 })
