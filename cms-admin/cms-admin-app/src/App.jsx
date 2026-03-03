@@ -8,7 +8,7 @@ import PropertiesCreate from "./pages/Properties/PropertiesCreate";
 import PropertyEdit from "./pages/Properties/PropertyEdit";
 import Reviews from "./pages/Reviews/Reviews";
 import ReviewsCreate from "./pages/Reviews/ReviewsCreate";
-import ReviewEdit from "./pages/Reviews/ReviewEdit";
+import ReviewsEdit from "./pages/Reviews/ReviewsEdit";
 import Services from "./pages/Services/Services";
 import ServicesCreate from "./pages/Services/ServicesCreate";
 import ServiceEdit from "./pages/Services/ServiceEdit";
@@ -42,7 +42,7 @@ function App() {
             />
             <Route path="/admin/reviews" element={<Reviews />} />
             <Route path="/admin/reviews/create" element={<ReviewsCreate />} />
-            <Route path="/admin/reviews/:id/edit" element={<ReviewEdit />} />
+            <Route path="/admin/reviews/:id/edit" element={<ReviewsEdit />} />
             <Route path="/admin/services" element={<Services />} />
             <Route path="/admin/services/create" element={<ServicesCreate />} />
             <Route path="/admin/services/:id/edit" element={<ServiceEdit />} />

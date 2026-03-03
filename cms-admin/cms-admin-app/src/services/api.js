@@ -196,3 +196,27 @@ export function updateService(id, data, opts) {
 export function deleteService(id, opts) {
   return del(`/api/services/${id}`, opts);
 }
+
+// About
+export function getAboutInfo(opts) {
+  return get(`/api/about`, opts);
+}
+export function putAboutInfo(data, opts) {
+  return put(`/api/about`, data, opts);
+}
+
+// Contact
+export function getContact(opts) {
+  return get(`/api/contact`, opts);
+}
+export function putContact(data, opts) {
+  return put(`/api/contact`, data, opts);
+}
+
+// Hero
+export function getHero(opts) {
+  return get(`/api/hero`, opts);
+}
+export function putHero(data, opts) {
+  return put(`/api/hero`, data, opts);
+}
