@@ -1,19 +1,12 @@
-.container {
-  padding: 2rem;
-  max-width: 900px;
+/* Status messages (loading, no data) */
+.status {
+  padding: 1rem;
+  color: #4a5568;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 1.75rem;
-  color: #1a202c;
+.statusError {
+  padding: 1rem;
+  color: #c33;
 }
 
 /* Error message */
@@ -21,6 +14,16 @@
   background-color: #fee;
   border: 1px solid #fcc;
   color: #c33;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+/* Success message */
+.success {
+  background-color: #f0fff4;
+  border: 1px solid #9ae6b4;
+  color: #276749;
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1.5rem;
@@ -42,9 +45,9 @@
   border-bottom: none;
 }
 
-.section h2 {
+.section h3 {
   margin: 0 0 1.5rem 0;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: #2d3748;
   font-weight: 600;
 }
@@ -97,13 +100,6 @@
   font-size: 0.875rem;
 }
 
-/* Form row for multiple inputs side-by-side */
-.formRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
 /* Required/optional indicators */
 .required {
   color: #e53e3e;
@@ -113,6 +109,22 @@
   color: #718096;
   font-weight: normal;
   font-size: 0.875rem;
+}
+
+/* Image preview */
+.imagePreview {
+  margin-top: 1rem;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.imagePreview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 4px;
+  object-fit: contain;
 }
 
 /* Form actions */
@@ -126,22 +138,6 @@
 }
 
 /* Buttons */
-.cancelButton {
-  padding: 0.625rem 1.25rem;
-  background-color: white;
-  border: 1px solid #cbd5e0;
-  border-radius: 4px;
-  font-size: 1rem;
-  color: #4a5568;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cancelButton:hover {
-  background-color: #f7fafc;
-  border-color: #a0aec0;
-}
-
 .submitButton {
   padding: 0.625rem 1.25rem;
   background-color: #4299e1;
@@ -168,25 +164,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
-  .formRow {
-    grid-template-columns: 1fr;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
   .actions {
     flex-direction: column-reverse;
   }
 
-  .cancelButton,
   .submitButton {
     width: 100%;
   }

@@ -7,7 +7,7 @@ const AboutSchema = new Schema(
     header: { type: String, required: true },
     textContent: { type: String, required: true },
     image: { type: String, required: false },
-    buttonText: { type: String, required: true },
+    buttonText: { type: String, required: false },
     buttonLink: { type: String, required: false },
   },
   { timestamps: true },
