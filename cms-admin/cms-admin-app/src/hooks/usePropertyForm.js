@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createProperty, updateProperty, uploadImage } from "../services/api";
+import { createProperty, updateProperty, uploadImages } from "../services/api";
 
 /**
  * Custom hook for property form logic (used by both Create and Edit pages)
@@ -24,61 +24,30 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     link: initialData?.link || "",
     status: initialData?.status || "published",
     featured: initialData?.featured ?? false,
+    featuredImage: initialData?.featuredImage || "",
   });
 
-  // Image state
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+  // Images array — each item is either:
+  //   { type: 'existing', url: 'https://...' }  — already uploaded, just a URL
+  //   { type: 'new', file: File, preview: 'blob:...' } — selected locally, not yet uploaded
+  const [images, setImages] = useState(
+    (initialData?.images || []).map((url) => ({ type: "existing", url })),
+  );
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle text input changes
+  // Handle text/select input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle checkbox changes (for boolean fields)
+  // Handle checkbox changes (for boolean fields like featured)
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-  };
-
-  // Handle image file selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      setError("Please select an image file");
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setError("Image must be less than 5MB");
-      return;
-    }
-
-    setImageFile(file);
-    setError(null);
-
-    // Create preview URL
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+    setFormData((prev) => ({ ...prev, [name]: checked }));
   };
 
   // Handle form submission
@@ -86,10 +55,9 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     e.preventDefault();
     setError(null);
 
-    // Validate required fields
-    // In edit mode, image is optional (only required if no existing image)
-    if (!isEditMode && !imageFile) {
-      setError("Please select an image");
+    // Validate: must have at least one image
+    if (images.length === 0) {
+      setError("Please add at least one image");
       return;
     }
     if (!formData.alt.trim()) {
@@ -104,16 +72,28 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     setIsSubmitting(true);
 
     try {
-      // Step 1: Upload new image if file was selected
-      let imageUrl = initialData?.image; // Keep existing image by default
-      if (imageFile) {
-        const uploadResult = await uploadImage(imageFile);
-        imageUrl = uploadResult.url;
+      // Step 1: Split images into two groups
+      const existingItems = images.filter((img) => img.type === "existing");
+      const newItems = images.filter((img) => img.type === "new");
+
+      // Step 2: Upload any new files in one batch request
+      let newUrls = [];
+      if (newItems.length > 0) {
+        const files = newItems.map((img) => img.file);
+        newUrls = await uploadImages(files); // returns array of URL strings in order
       }
 
-      // Step 2: Prepare property data
+      // Step 3: Rebuild the final ordered URL array, preserving the user's drag order.
+      // We walk the original images array and replace each item with its final URL.
+      let newUrlIndex = 0;
+      const finalImages = images.map((img) => {
+        if (img.type === "existing") return img.url;
+        return newUrls[newUrlIndex++]; // consume new URLs in order
+      });
+
+      // Step 4: Build full property payload
       const propertyData = {
-        image: imageUrl,
+        images: finalImages,
         alt: formData.alt,
         price: formData.price,
         address: formData.address || undefined,
@@ -123,16 +103,16 @@ export function usePropertyForm(initialData = null, propertyId = null) {
         link: formData.link || undefined,
         status: formData.status,
         featured: formData.featured,
+        featuredImage: formData.featuredImage || undefined,
       };
 
-      // Step 3: Create or update
+      // Step 5: Create or update
       if (isEditMode) {
         await updateProperty(propertyId, propertyData);
       } else {
         await createProperty(propertyData);
       }
 
-      // Success! Navigate back to list
       navigate("/admin/properties");
     } catch (err) {
       console.error(
@@ -150,14 +130,13 @@ export function usePropertyForm(initialData = null, propertyId = null) {
 
   return {
     formData,
-    imageFile,
-    imagePreview,
+    images, // pass to <ImageUpload images={images} onChange={setImages} />
+    setImages,
     isSubmitting,
     error,
     isEditMode,
     handleChange,
     handleCheckboxChange,
-    handleImageChange,
     handleSubmit,
   };
 }

@@ -5,7 +5,7 @@ import upload from "../config/multer.js";
 
 const router = express.Router();
 
-// POST /api/upload - Upload image (PROTECTED)
-router.post("/", authenticateToken, upload.single('image'), uploadImage);
+// POST /api/upload - Upload images (PROTECTED)
+router.post("/", authenticateToken, upload.array("images", 15), uploadImage);
 
 export default router;

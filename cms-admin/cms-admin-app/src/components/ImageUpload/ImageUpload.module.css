@@ -1,0 +1,114 @@
+/* ── Wrapper ─────────────────────────────────────────────── */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Size-error banner ───────────────────────────────────── */
+.sizeError {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* ── Thumbnail grid ──────────────────────────────────────── */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* ── Individual thumbnail card ───────────────────────────── */
+.thumb {
+  position: relative;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: grab;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s;
+}
+
+.thumb:active {
+  cursor: grabbing;
+}
+
+.thumb:hover {
+  border-color: #a0aec0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.thumb img {
+  display: block;
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+}
+
+/* ── Remove button ───────────────────────────────────────── */
+.removeBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.removeBtn:hover {
+  background-color: rgba(197, 48, 48, 0.9);
+}
+
+/* ── Add-images trigger ──────────────────────────────────── */
+.addLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4a5568;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+  align-self: flex-start;
+}
+
+.addLabel:hover {
+  background-color: #f7fafc;
+  border-color: #a0aec0;
+}
+
+/* ── Drag-over visual hint ───────────────────────────────── */
+.thumbDragOver {
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .thumb img {
+    width: 90px;
+    height: 68px;
+  }
+}

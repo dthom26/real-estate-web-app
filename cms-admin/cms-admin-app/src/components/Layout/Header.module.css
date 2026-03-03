@@ -1,12 +1,14 @@
 .header {
+  position: relative; /* required for z-index to take effect */
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  height: 56px;
+  padding: 0 20px;
   background: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-  z-index: 10;
+  border-bottom: 1px solid #e2e8f0; /* single consistent separator */
+  flex-shrink: 0; /* prevent header from collapsing in the flex column */
 }
 
 .brand {

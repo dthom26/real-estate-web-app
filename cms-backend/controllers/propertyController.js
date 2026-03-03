@@ -66,7 +66,7 @@ export const getCarousel = async (req, res, next) => {
 
     const payload = slides.map((s) => ({
       _id: s._id,
-      image: s.featuredImage || s.image,
+      images: s.featuredImage ? [s.featuredImage] : s.images,
       alt: s.alt,
       address: s.address,
       price: s.price,

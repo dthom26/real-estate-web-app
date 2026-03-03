@@ -24,7 +24,7 @@ export default function GalleryCarousel() {
             <div className={styles.imageShadowBorder}>
               {(() => {
                 const item = items[current];
-                const src = item ? item.image || item : undefined;
+                const src = item ? item.images?.[0] || item : undefined;
                 return <BaseCard.Image src={src} cover />;
               })()}
             </div>

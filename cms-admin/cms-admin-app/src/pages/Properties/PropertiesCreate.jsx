@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { usePropertyForm } from "../../hooks/usePropertyForm";
+import ImageUpload from "../../components/ImageUpload/ImageUpload";
 import styles from "./PropertiesCreate.module.css";
 
 export default function PropertiesCreate() {
@@ -8,12 +9,12 @@ export default function PropertiesCreate() {
   // All form logic is now in the custom hook!
   const {
     formData,
-    imagePreview,
+    images,
     isSubmitting,
     error,
     handleChange,
     handleCheckboxChange,
-    handleImageChange,
+    setImages,
     handleSubmit,
   } = usePropertyForm(); // No args = create mode
 
@@ -110,6 +111,25 @@ export default function PropertiesCreate() {
 
         {/* Image Section */}
         <section className={styles.section}>
+          <h2>Images</h2>
+          <ImageUpload images={images} onChange={setImages} />
+          <div className={styles.formGroup}>
+              <label htmlFor="alt">
+                Image Alt Text <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                id="alt"
+                name="alt"
+                value={formData.alt}
+                onChange={handleChange}
+                placeholder="Beautiful home exterior"
+                required
+              />
+              <small>Describe the image for accessibility</small>
+            </div>
+        </section>
+        {/* <section className={styles.section}>
           <h2>Image</h2>
 
           <div className={styles.formGroup}>
@@ -148,7 +168,7 @@ export default function PropertiesCreate() {
               <img src={imagePreview} alt="Preview" />
             </div>
           )}
-        </section>
+        </section> */}
 
         {/* Additional Info Section */}
         <section className={styles.section}>

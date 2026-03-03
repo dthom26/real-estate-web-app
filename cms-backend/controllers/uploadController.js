@@ -14,14 +14,15 @@ const uploadToCloudinary = (buffer) => {
 
 export const uploadImage = async (req, res, next) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ error: "No file uploaded" });
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: "No files uploaded" });
         }
-        const result = await uploadToCloudinary(req.file.buffer);
+        const uploadPromises = req.files.map(file => uploadToCloudinary(file.buffer));
+        const results = await Promise.all(uploadPromises);
         res.status(201).json({
             success: true,
-            data: { url: result.secure_url },
-            message: 'Image uploaded successfully'
+            data: results.map(result => ({ url: result.secure_url })),
+            message: 'Images uploaded successfully'
         });
     } catch (error) {
         next(error);
