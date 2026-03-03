@@ -1,18 +1,20 @@
-.layout{
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}   
-
-.body{
-    display: flex;
-    flex: 1;
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.main{
-    flex: 1;                 /* take remaining horizontal space */
-    min-height: 0;           /* allow child to scroll inside flex container */
-    overflow-y: auto;        /* make the main area scrollable vertically */
-    padding: clamp(12px, 2.5vw, 32px); /* spacing inside the content area */
-    box-sizing: border-box;  /* include padding in size calculations */
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* prevent sidebar from causing horizontal scroll */
+}
+
+.main {
+  flex: 1;
+  min-height: 0; /* allow child to scroll inside flex container */
+  overflow-y: auto;
+  padding: clamp(12px, 2.5vw, 32px);
+  box-sizing: border-box;
+  background: #f7fafc; /* visually separates content area from sidebar */
 }

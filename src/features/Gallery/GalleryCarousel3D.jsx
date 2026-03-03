@@ -69,18 +69,18 @@ export default function GalleryCarousel3D() {
               >
                 <div className={styles.imageShadowBorder}>
                   <BaseCard.Image
-                    src={item.image}
+                    src={item.images?.[0]}
                     alt={item.alt}
                     cover
                     loading={isNeighbor ? "eager" : "lazy"}
                   />
                   <PropertyInfoOverlay isVisible={idx === current}>
                     {item.address && <p>{item.address}</p>}
-                    {item.price && <h3>{item.price}</h3>}
+                    {item.price && <h3>${item.price}</h3>}
                     <div className={styles.propertyDetails}>
-                      {item.bedrooms && <span>{item.bedrooms} bd</span>}
-                      {item.bathrooms && <span>{item.bathrooms} ba</span>}
-                      {item.sqft && <span>{item.sqft} sqft</span>}
+                      {item.bedrooms && <span>{item.bedrooms} bed </span>}
+                      {item.bathrooms && <span>{item.bathrooms} bath </span>}
+                      {item.sqft && <span>{item.sqft} sqft </span>}
                     </div>
                   </PropertyInfoOverlay>
                 </div>

@@ -2,12 +2,11 @@ import { body, validationResult } from "express-validator";
 
 // Validation rules for creating/updating a property
 export const propertyValidation = [
-  body("image")
-    .trim()
-    .notEmpty()
-    .withMessage("Image is required")
-    .isString()
-    .withMessage("Image must be a string"),
+  body("images")
+    .isArray({ min: 1 })
+    .withMessage("At least one image is required"),
+
+  body("images.*").isString().withMessage("Each image must be a string"),
 
   body("alt")
     .trim()

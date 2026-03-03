@@ -10,6 +10,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB — matches Cloudinary free plan limit
+  fileFilter,
+});
 
 export default upload;

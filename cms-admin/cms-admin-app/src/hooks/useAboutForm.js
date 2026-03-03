@@ -41,7 +41,7 @@ export function useAboutForm(initialData = null) {
     }
 
     // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 20 * 1024 * 1024;
     if (file.size > maxSize) {
       setError("Image must be less than 5MB");
       return;

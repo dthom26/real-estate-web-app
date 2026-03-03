@@ -16,9 +16,9 @@ Building a basic admin UI first allows you to:
 
 ### 1. Project Setup
 
-- [ ] Scaffold `cms-admin` folder as a standalone React app (Vite recommended).
-- [ ] Install dependencies: `react-router-dom`, `axios`.
-- [ ] Set up basic folder structure:
+- [x] Scaffold `cms-admin` folder as a standalone React app (Vite recommended).
+- [x] Install dependencies: `react-router-dom`, `axios`.
+- [x] Set up basic folder structure:
   - `src/components/` (shared UI)
   - `src/pages/` (feature pages)
   - `src/services/` (API logic)
@@ -28,55 +28,56 @@ Building a basic admin UI first allows you to:
 
 ### 2. Authentication
 
-- [ ] Create Login page with username/password form.
-- [ ] Connect to backend `/api/auth/login` endpoint.
-- [ ] Store JWT in localStorage.
-- [ ] Set up AuthContext for global auth state.
-- [ ] Implement protected routes (redirect to login if not authenticated).
-- [ ] **Token refresh logic**: Auto-refresh JWT before expiry or extend JWT expiry to 8-12 hours to avoid mid-work interruptions.
+- [x] Create Login page with username/password form.
+- [x] Connect to backend `/api/auth/login` endpoint.
+- [x] Store JWT in memory (in-memory token store used instead of localStorage — more secure).
+- [x] Set up AuthContext for global auth state.
+- [x] Implement protected routes (redirect to login if not authenticated).
+- [x] **Token refresh logic**: Auto-refresh JWT on 401 response via `api.js` interceptor; session bootstrapped from httpOnly cookie on load.
 
 ### 3. Layout & Navigation
 
-- [ ] Build Layout component with sidebar and header.
-- [ ] Sidebar: links to Dashboard, Properties, Reviews, Services, Content.
-- [ ] Header: show logged-in user, logout button.
+- [x] Build Layout component with sidebar and header.
+- [x] Sidebar: links to Dashboard, Properties, Reviews, Services, Content.
+- [x] Header: show logged-in user, logout button.
 
 ### 4. Properties Management (CRUD)
 
-- [ ] Properties List page: table of properties (address, price, actions).
-- [ ] Property Create page: form for new property (address, price, image, etc.).
-- [ ] Property Edit page: form pre-filled with existing data.
-- [ ] Delete property: confirmation modal, remove from list.
-- [ ] Use reusable form components for common UI patterns.
+- [x] Properties List page: table of properties (address, price, actions).
+- [x] Property Create page: form for new property (address, price, image, etc.).
+- [x] Property Edit page: form pre-filled with existing data.
+- [ ] Delete property: confirmation modal, remove from list. _(Delete is wired but fires immediately — no confirmation modal yet.)_
+- [x] Use reusable form components for common UI patterns (`PropertyForm` component).
 - [ ] **Pagination (defer if <50 items)**: Add page navigation when dataset grows large.
 
 ### 5. Reviews Management (CRUD)
 
-- [ ] Reviews List page: table of reviews.
-- [ ] Review Create/Edit page: form for review fields (name, rating, comment).
-- [ ] Delete review: confirmation modal.
+- [x] Reviews List page: table of reviews.
+- [x] Review Create/Edit page: form for review fields (name, rating, comment).
+- [ ] Delete review: confirmation modal. _(Delete is wired but no confirmation modal yet.)_
 
 ### 6. Services Management (CRUD)
 
-- [ ] Services List page: table of services.
-- [ ] Service Create/Edit page: form for service fields (title, description, image).
-- [ ] Delete service: confirmation modal.
+- [x] Services List page: table of services.
+- [x] Service Create/Edit page: form for service fields (title, description, image).
+- [ ] Delete service: confirmation modal. _(Delete is wired but no confirmation modal yet.)_
 
 ### 7. Content Management (Singletons)
 
-- [ ] About page: form for header, textContent, image.
-- [ ] Contact page: form for email, phone, address, description.
+- [x] About page: form for header, textContent, image.
+- [x] Contact page: form for email, phone, address, description.
+- [x] **Hero Section** _(bonus — not in original plan)_: form for hero content, managed in the same accordion UI.
 
 ### 8. Error Handling & Feedback
 
-- [ ] Show API errors in red banner.
-- [ ] Show form validation errors below fields.
-- [ ] Show success messages (green banner or toast).
-- [ ] **Unsaved changes warning**: Prompt user before navigating away from forms with unsaved data.
+- [x] Show API errors in red banner (`ErrorBanner` component built; inline error divs used on list pages).
+- [x] Show form validation errors below fields (reusable `Input` component handles this).
+- [x] Show success messages (green success banners implemented on all Content/singleton forms).
+- [ ] **Unsaved changes warning**: Prompt user before navigating away from forms with unsaved data. _(Not implemented.)_
 
 ### 9. File Uploads
 
-- [ ] Integrate image upload in property/service forms.
+- [ ] Integrate image upload in property/service forms. _(`ImageUpload.jsx` is a placeholder — not yet implemented.)_
 - [ ] Preview image before upload.
 - [ ] Handle upload errors gracefully.
 

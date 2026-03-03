@@ -110,9 +110,12 @@ export const tokenStore = tokenProvider;
 // Upload helper for file uploads
 // ========================================
 
-export async function uploadImage(file, opts = {}) {
+// Accepts an array of File objects, uploads them all in one request,
+// and returns an array of URL strings.
+export async function uploadImages(files, opts = {}) {
   const formData = new FormData();
-  formData.append("image", file);
+  // Each file must be appended under the same field name the backend expects
+  files.forEach((file) => formData.append("images", file));
 
   const token = tokenProvider.get();
   const csrf = readCookie("csrfToken");
@@ -139,7 +142,17 @@ export async function uploadImage(file, opts = {}) {
     throw err;
   }
 
-  return json?.data ?? json;
+  // Backend returns: { data: [{ url: '...' }, { url: '...' }] }
+  // We unwrap to a plain array of URL strings
+  const data = json?.data ?? json;
+  return Array.isArray(data) ? data.map((item) => item.url) : [];
+}
+
+// Convenience wrapper for single-file uploads (used by services, about, etc.)
+// Returns { url: '...' } to match the shape callers expect.
+export async function uploadImage(file, opts = {}) {
+  const urls = await uploadImages([file], opts);
+  return { url: urls[0] };
 }
 
 // ========================================

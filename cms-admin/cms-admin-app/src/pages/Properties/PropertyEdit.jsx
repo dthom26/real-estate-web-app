@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProperty } from '../../hooks/useProperty';
 import { usePropertyForm } from '../../hooks/usePropertyForm';
+import ImageUpload from '../../components/ImageUpload/ImageUpload';
 import styles from './PropertiesCreate.module.css';
 
 function PropertyEditForm({ property, id }) {
@@ -8,12 +9,12 @@ function PropertyEditForm({ property, id }) {
   
   const {
     formData,
-    imagePreview,
+    images,
+    setImages,
     isSubmitting,
     error: formError,
     handleChange,
     handleCheckboxChange,
-    handleImageChange,
     handleSubmit,
   } = usePropertyForm(property, id);
 
@@ -110,7 +111,9 @@ function PropertyEditForm({ property, id }) {
 
         {/* Image Section */}
         <section className={styles.section}>
-          <h2>Image</h2>
+          <h2>Images</h2>
+
+          <ImageUpload images={images} onChange={setImages} />
 
           <div className={styles.formGroup}>
             <label htmlFor="alt">
@@ -127,27 +130,43 @@ function PropertyEditForm({ property, id }) {
             />
             <small>Describe the image for accessibility</small>
           </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="image">
-              Property Image <span className={styles.optional}>(optional - leave empty to keep current)</span>
-            </label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <small>Max file size: 5MB. Formats: JPG, PNG, WebP</small>
-          </div>
-
-          {imagePreview && (
-            <div className={styles.imagePreview}>
-              <img src={imagePreview} alt="Preview" />
-            </div>
-          )}
         </section>
+
+        {/* Featured Image Picker — only shown when "Feature on Homepage" is checked */}
+        {formData.featured && images.length > 0 && (
+          <section className={styles.section}>
+            <h2>Featured Image</h2>
+            <p><small>Click an image to use it as the homepage carousel thumbnail.</small></p>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {images.map((image, index) => {
+                const src = image.type === 'existing' ? image.url : image.preview;
+                const isSelected = formData.featuredImage === src;
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => handleChange({ target: { name: 'featuredImage', value: isSelected ? '' : src } })}
+                    style={{
+                      padding: 0,
+                      border: isSelected ? '3px solid #2563eb' : '3px solid transparent',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      background: 'none',
+                    }}
+                  >
+                    <img
+                      src={src}
+                      alt={`Option ${index + 1}`}
+                      width={100}
+                      height={75}
+                      style={{ objectFit: 'cover', borderRadius: '4px', display: 'block' }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Additional Info Section */}
         <section className={styles.section}>
