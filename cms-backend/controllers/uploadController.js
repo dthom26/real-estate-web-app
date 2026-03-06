@@ -21,7 +21,7 @@ export const uploadImage = async (req, res, next) => {
         const results = await Promise.all(uploadPromises);
         res.status(201).json({
             success: true,
-            data: results.map(result => ({ url: result.secure_url })),
+            data: results.map(result => ({ url: result.secure_url, public_id: result.public_id })),
             message: 'Images uploaded successfully'
         });
     } catch (error) {

@@ -1,11 +1,14 @@
 import styles from "./Reviews.module.css";
 import { useNavigate } from "react-router-dom";
 import { useReviews } from "../../hooks/useReviews";
+import ConfirmDeleteModal from '../../components/ConfirmModal/ConfirmDelete/ConfirmDeleteModal';
+import useConfirmDelete from '../../components/ConfirmModal/hooks/useConfirmDelete';
 
 // Reviews page placeholder
 export default function Reviews() {
   const navigate = useNavigate();
   const { reviews, loading, error, deleteReviewById } = useReviews();
+  const { isOpen, itemToDelete, openModal, closeModal, confirmDelete } = useConfirmDelete(deleteReviewById);
 
   // run conditional to check
   if (loading) return <div>Loading...</div>;
@@ -52,7 +55,7 @@ export default function Reviews() {
                 >
                   Edit
                 </button>
-                <button onClick={() => deleteReviewById(review._id)}>
+                <button onClick={() => openModal(review)}>
                   Delete
                 </button>
               </td>
@@ -60,6 +63,11 @@ export default function Reviews() {
           ))}
         </tbody>
       </table>
+      <ConfirmDeleteModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

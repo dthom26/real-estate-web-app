@@ -84,6 +84,7 @@ async function request(
       json?.error?.message || json?.message || `Request failed: ${res.status}`;
     const err = new Error(msg);
     err.status = res.status;
+    err.fields = json?.error?.fields ?? null;
     throw err;
   }
 
@@ -142,17 +143,19 @@ export async function uploadImages(files, opts = {}) {
     throw err;
   }
 
-  // Backend returns: { data: [{ url: '...' }, { url: '...' }] }
-  // We unwrap to a plain array of URL strings
+  // backend returns { data: [ { url, public_id }, ... ] } for consistency with other endpoints, but we only need the URLs here
   const data = json?.data ?? json;
-  return Array.isArray(data) ? data.map((item) => item.url) : [];
+  // Return full { url, public_id } objects — callers now need to handle objects
+  return Array.isArray(data)
+    ? data.map((item) => ({ url: item.url, public_id: item.public_id }))
+    : [];
 }
 
-// Convenience wrapper for single-file uploads (used by services, about, etc.)
-// Returns { url: '...' } to match the shape callers expect.
+// Convenience helper for single file uploads that returns just the URL string
+// Note: this returns the full { url, public_id } object for consistency, but you can easily extract the URL with result.url
 export async function uploadImage(file, opts = {}) {
-  const urls = await uploadImages([file], opts);
-  return { url: urls[0] };
+  const results = await uploadImages([file], opts);
+  return results[0]; // { url, public_id }
 }
 
 // ========================================

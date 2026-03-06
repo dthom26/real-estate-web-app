@@ -6,7 +6,15 @@ export const propertyValidation = [
     .isArray({ min: 1 })
     .withMessage("At least one image is required"),
 
-  body("images.*").isString().withMessage("Each image must be a string"),
+  body("images.*.url")
+    .isString()
+    .notEmpty()
+    .withMessage("Each image must have a url"),
+
+  body("images.*.public_id")
+    .isString()
+    .notEmpty()
+    .withMessage("Each image must have a public_id"),
 
   body("alt")
     .trim()
