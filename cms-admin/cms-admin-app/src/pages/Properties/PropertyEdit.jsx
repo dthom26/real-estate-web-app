@@ -1,12 +1,12 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useProperty } from '../../hooks/useProperty';
-import { usePropertyForm } from '../../hooks/usePropertyForm';
-import ImageUpload from '../../components/ImageUpload/ImageUpload';
-import styles from './PropertiesCreate.module.css';
+import { useNavigate, useParams } from "react-router-dom";
+import { useProperty } from "../../hooks/useProperty";
+import { usePropertyForm } from "../../hooks/usePropertyForm";
+import ImageUpload from "../../components/ImageUpload/ImageUpload";
+import styles from "./PropertiesCreate.module.css";
 
 function PropertyEditForm({ property, id }) {
   const navigate = useNavigate();
-  
+
   const {
     formData,
     images,
@@ -136,22 +136,36 @@ function PropertyEditForm({ property, id }) {
         {formData.featured && images.length > 0 && (
           <section className={styles.section}>
             <h2>Featured Image</h2>
-            <p><small>Click an image to use it as the homepage carousel thumbnail.</small></p>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <p>
+              <small>
+                Click an image to use it as the homepage carousel thumbnail.
+              </small>
+            </p>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
               {images.map((image, index) => {
-                const src = image.type === 'existing' ? image.url : image.preview;
+                const src =
+                  image.type === "existing" ? image.url : image.preview;
                 const isSelected = formData.featuredImage === src;
                 return (
                   <button
                     key={index}
                     type="button"
-                    onClick={() => handleChange({ target: { name: 'featuredImage', value: isSelected ? '' : src } })}
+                    onClick={() =>
+                      handleChange({
+                        target: {
+                          name: "featuredImage",
+                          value: isSelected ? "" : src,
+                        },
+                      })
+                    }
                     style={{
                       padding: 0,
-                      border: isSelected ? '3px solid #2563eb' : '3px solid transparent',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      background: 'none',
+                      border: isSelected
+                        ? "3px solid #2563eb"
+                        : "3px solid transparent",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      background: "none",
                     }}
                   >
                     <img
@@ -159,7 +173,11 @@ function PropertyEditForm({ property, id }) {
                       alt={`Option ${index + 1}`}
                       width={100}
                       height={75}
-                      style={{ objectFit: 'cover', borderRadius: '4px', display: 'block' }}
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                        display: "block",
+                      }}
                     />
                   </button>
                 );
@@ -242,9 +260,20 @@ export default function PropertyEdit() {
   const { property, loading, error } = useProperty(id);
 
   // Show loading/error states
-  if (loading) return <div className={styles.container}>Loading property...</div>;
-  if (error) return <div className={styles.container}><div className={styles.error}>Error: {error}</div></div>;
-  if (!property) return <div className={styles.container}><div className={styles.error}>Property not found</div></div>;
+  if (loading)
+    return <div className={styles.container}>Loading property...</div>;
+  if (error)
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>Error: {error}</div>
+      </div>
+    );
+  if (!property)
+    return (
+      <div className={styles.container}>
+        <div className={styles.error}>Property not found</div>
+      </div>
+    );
 
   // Only render form after data is loaded
   return <PropertyEditForm property={property} id={id} />;
