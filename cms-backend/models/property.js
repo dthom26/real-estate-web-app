@@ -4,11 +4,18 @@ const Schema = mongoose.Schema;
 
 const PropertySchema = new Schema(
   {
-    images: { type: [String], required: true, 
-    validate: {
-      validator: (arr) => arr.length >= 1,
-      message: 'At least one image is required'
-    }  
+    images: { 
+      type: [ 
+        {
+          url: { type: String, required: true },
+          public_id: { type: String, required: true }
+        }
+      ],
+      required: true,
+      validate: {
+        validator: (arr) => arr.length >= 1,
+        message: 'At least one image is required'
+      }  
   },
     alt: { type: String, required: true },
     address: { type: String, required: false },

@@ -63,6 +63,7 @@ export default function ServicesCreate() {
               placeholder="Describe the service..."
               rows="6"
               required
+              minLength={10}
             />
             <small>Full description of the service</small>
           </div>

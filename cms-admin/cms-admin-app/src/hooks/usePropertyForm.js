@@ -27,13 +27,16 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     featuredImage: initialData?.featuredImage || "",
   });
 
-  // Images array — each item is either:
-  //   { type: 'existing', url: 'https://...' }  — already uploaded, just a URL
-  //   { type: 'new', file: File, preview: 'blob:...' } — selected locally, not yet uploaded
+  // Images state - we keep track of both existing and new images in a single array
+  // Each item is either { type: "existing", url, public_id } or { type: "new", file }
+  // This allows us to preserve the user's drag-and-drop order regardless of when they add/remove images.
   const [images, setImages] = useState(
-    (initialData?.images || []).map((url) => ({ type: "existing", url })),
+    (initialData?.images || []).map((img) => ({
+      type: "existing",
+      url: img.url,
+      public_id: img.public_id,
+    })),
   );
-
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -84,11 +87,12 @@ export function usePropertyForm(initialData = null, propertyId = null) {
       }
 
       // Step 3: Rebuild the final ordered URL array, preserving the user's drag order.
-      // We walk the original images array and replace each item with its final URL.
-      let newUrlIndex = 0;
+      // We iterate through the original images array (which is in the user's desired order) and replace new items with their corresponding URLs from the upload response.
+      let newIndex = 0;
       const finalImages = images.map((img) => {
-        if (img.type === "existing") return img.url;
-        return newUrls[newUrlIndex++]; // consume new URLs in order
+        if (img.type === "existing")
+          return { url: img.url, public_id: img.public_id };
+        return newUrls[newIndex++]; // { url, public_id } objects from Step 8a
       });
 
       // Step 4: Build full property payload

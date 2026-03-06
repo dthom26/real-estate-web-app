@@ -1,14 +1,17 @@
 import styles from "./Services.module.css";
 import { useNavigate } from "react-router-dom";
 import { useServices } from "../../hooks/useServices";
+import ConfirmDeleteModal from "../../components/ConfirmModal/ConfirmDelete/ConfirmDeleteModal";
+import useConfirmDelete from "../../components/ConfirmModal/hooks/useConfirmDelete";
 
 export default function Services() {
   const navigate = useNavigate();
   const { services, loading, error, deleteServiceById } = useServices();
+  const { isOpen, itemToDelete, openModal, closeModal, confirmDelete } =
+    useConfirmDelete(deleteServiceById);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (services.length === 0) return <div>No services found.</div>;
 
   return (
     <div>
@@ -18,6 +21,7 @@ export default function Services() {
           Add Service
         </button>
       </div>
+      {services.length === 0 && <div>No services found.</div>}
 
       <table>
         <thead>
@@ -51,14 +55,17 @@ export default function Services() {
                 >
                   Edit
                 </button>
-                <button onClick={() => deleteServiceById(service._id)}>
-                  Delete
-                </button>
+                <button onClick={() => openModal(service._id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <ConfirmDeleteModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

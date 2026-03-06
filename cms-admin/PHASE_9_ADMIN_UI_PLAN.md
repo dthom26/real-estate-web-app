@@ -77,9 +77,11 @@ Building a basic admin UI first allows you to:
 
 ### 9. File Uploads
 
-- [ ] Integrate image upload in property/service forms. _(`ImageUpload.jsx` is a placeholder — not yet implemented.)_
-- [ ] Preview image before upload.
-- [ ] Handle upload errors gracefully.
+- [x] Integrate image upload in property/service forms. (Multi-image upload built for properties; single image for services/hero/about unchanged.)
+- [x] Preview image before upload. (Thumbnails shown via `URL.createObjectURL`.)
+- [x] Handle upload errors gracefully. (10MB client-side size validation; server-side multer limit aligned to Cloudinary.)
+- [x] **Bonus — multi-image support**: Properties support multiple images with drag-to-reorder.
+- [x] **Bonus — featured image picker**: Edit page lets admin pick which image appears in the homepage carousel.
 
 ### 10. Testing & Polish
 

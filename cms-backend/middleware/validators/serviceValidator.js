@@ -20,11 +20,15 @@ export const serviceValidation = [
     .isLength({ min: 10 })
     .withMessage("Description must be at least 10 characters"),
 
-  body("image")
-    .optional()
-    .trim()
+  body("image.url")
     .isString()
-    .withMessage("Image must be a string"),
+    .notEmpty()
+    .withMessage("Image URL is required"),
+
+  body("image.public_id")
+    .isString()
+    .notEmpty()
+    .withMessage("Image public_id is required"),
 
   body("order")
     .optional()

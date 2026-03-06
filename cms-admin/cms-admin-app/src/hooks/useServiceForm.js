@@ -17,13 +17,15 @@ export function useServiceForm(initialData = null, serviceId = null) {
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     description: initialData?.description || "",
-    image: initialData?.image || "",
+    image: initialData?.image || null,
     status: initialData?.status || "published",
   });
 
   // Image handling state
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+  const [imagePreview, setImagePreview] = useState(
+    initialData?.image?.url || null,
+  );
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,19 +62,18 @@ export function useServiceForm(initialData = null, serviceId = null) {
     setError(null);
 
     try {
-      let imageUrl = formData.image;
+      let imageData = formData.image; // { url, public_id } if existing
 
       // If a new image file was selected, upload it first
       if (imageFile) {
-        const uploadResult = await uploadImage(imageFile);
-        imageUrl = uploadResult.url;
+        imageData = await uploadImage(imageFile); // { url, public_id }
       }
 
       // Prepare submission data
       const submitData = {
         title: formData.title,
         description: formData.description,
-        image: imageUrl,
+        image: imageData,
         status: formData.status,
       };
 
@@ -85,7 +86,14 @@ export function useServiceForm(initialData = null, serviceId = null) {
       navigate("/admin/services");
     } catch (err) {
       console.error("Service submission error:", err);
-      setError(err.message || "An error occurred");
+      if (err.fields?.length) {
+        const fieldMessages = err.fields
+          .map((f) => `${f.path}: ${f.msg}`)
+          .join("; ");
+        setError(fieldMessages);
+      } else {
+        setError(err.message || "An error occurred");
+      }
     } finally {
       setIsSubmitting(false);
     }
