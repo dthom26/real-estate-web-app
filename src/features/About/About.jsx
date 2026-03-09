@@ -6,8 +6,7 @@ import TextImageSection from "../../components/TextImageSection/TextImageSection
 export default function About() {
   const sectionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const {data, loading, error} = useAbout();
-  
+  const { data, loading, error } = useAbout();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -44,16 +43,11 @@ export default function About() {
     >
       <TextImageSection imageFirst={false}>
         <div className={styles.imageWrapper}>
-          <TextImageSection.Image
-            src={data.image}
-            alt={data.header}
-          />
+          <TextImageSection.Image src={data.image?.url} alt={data.header} />
         </div>
         <div className={styles.contentWrapper}>
           <TextImageSection.Content>
-            <TextImageSection.Header>
-              {data.header}
-            </TextImageSection.Header>
+            <TextImageSection.Header>{data.header}</TextImageSection.Header>
             <TextImageSection.TextContent>
               {data.textContent}
             </TextImageSection.TextContent>

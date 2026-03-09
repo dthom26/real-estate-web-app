@@ -23,44 +23,48 @@ export default function Services() {
       </div>
       {services.length === 0 && <div>No services found.</div>}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {services.map((service) => (
-            <tr key={service._id}>
-              <td>
-                <img src={service.image} alt={service.title} />
-              </td>
-              <td>{service.title}</td>
-              <td>
-                {service.description.substring(0, 50)}
-                {service.description.length > 50 ? "..." : ""}
-              </td>
-              <td>
-                <span className={styles[service.status]}>{service.status}</span>
-              </td>
-              <td>
-                <button
-                  onClick={() =>
-                    navigate(`/admin/services/${service._id}/edit`)
-                  }
-                >
-                  Edit
-                </button>
-                <button onClick={() => openModal(service._id)}>Delete</button>
-              </td>
+      <div className={styles.tableWrap}>
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {services.map((service) => (
+              <tr key={service._id}>
+                <td data-label="Image">
+                  <img src={service.image} alt={service.title} />
+                </td>
+                <td data-label="Title">{service.title}</td>
+                <td data-label="Description">
+                  {service.description.substring(0, 50)}
+                  {service.description.length > 50 ? "..." : ""}
+                </td>
+                <td data-label="Status">
+                  <span className={styles[service.status]}>
+                    {service.status}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    onClick={() =>
+                      navigate(`/admin/services/${service._id}/edit`)
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => openModal(service._id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <ConfirmDeleteModal
         isOpen={isOpen}
         onClose={closeModal}

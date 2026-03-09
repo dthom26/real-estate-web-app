@@ -12,7 +12,10 @@ export function useAboutForm(initialData = null) {
 
   // Image handling state
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+  const [imagePreview, setImagePreview] = useState(
+    initialData?.image?.url || null,
+  );
+  const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +30,13 @@ export function useAboutForm(initialData = null) {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleLibrarySelect = (asset) => {
+    setImageFile(null);
+    setImagePreview(asset.url);
+    setSelectedLibraryImage(asset);
+    setSuccess(false);
   };
 
   // Handle image file selection
@@ -67,10 +77,11 @@ export function useAboutForm(initialData = null) {
 
     try {
       // Step 1: Upload new image if a new file was selected
-      let imageUrl = initialData?.image; // keep existing image by default
-      if (imageFile) {
-        const uploadResult = await uploadImage(imageFile);
-        imageUrl = uploadResult.url;
+      let imageData = initialData?.image ?? null; // already { url, public_id }
+      if (selectedLibraryImage) {
+        imageData = selectedLibraryImage;
+      } else if (imageFile) {
+        imageData = await uploadImage(imageFile); // returns { url, public_id }
       }
 
       // Step 2: Prepare about data
@@ -79,7 +90,7 @@ export function useAboutForm(initialData = null) {
         textContent: formData.textContent,
         buttonText: formData.buttonText,
         buttonLink: formData.buttonLink,
-        image: imageUrl,
+        image: imageData,
       };
 
       // Step 3: Send update to API
@@ -103,6 +114,7 @@ export function useAboutForm(initialData = null) {
     success,
     handleChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   };
 }

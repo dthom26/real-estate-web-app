@@ -1,5 +1,6 @@
 import { useAbout } from "../../../hooks/useAbout";
 import { useAboutForm } from "../../../hooks/useAboutForm";
+import { useMediaLibrary } from "../../../hooks/useMediaLibrary";
 import styles from "./About.module.css";
 
 /**
@@ -21,6 +22,7 @@ export default function About() {
  * Safe to call hooks here because no conditional returns above it.
  */
 function AboutForm({ about }) {
+  const { openLibrary } = useMediaLibrary();
   const {
     formData,
     imagePreview,
@@ -29,6 +31,7 @@ function AboutForm({ about }) {
     success,
     handleChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   } = useAboutForm(about);
 
@@ -133,6 +136,17 @@ function AboutForm({ about }) {
               accept="image/*"
               onChange={handleImageChange}
             />
+            <button
+              type="button"
+              onClick={() =>
+                openLibrary({
+                  multiple: false,
+                  onSelect: (asset) => handleLibrarySelect(asset),
+                })
+              }
+            >
+              Choose from Library
+            </button>
             <small>Max file size: 5MB. Formats: JPG, PNG, WebP</small>
           </div>
 

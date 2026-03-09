@@ -1,0 +1,270 @@
+/* =============================================================
+   Shared form styles — compose from individual page modules
+   Usage:  .submitButton { composes: submitButton from '../../styles/forms.module.css'; }
+   ============================================================= */
+
+/* Page container */
+.container {
+  padding: 2rem;
+  max-width: 900px;
+}
+
+/* Page header row */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--color-text-heading);
+}
+
+/* ---- Feedback banners ---- */
+.status {
+  padding: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.statusError {
+  padding: 1rem;
+  color: var(--color-error-text-light);
+}
+
+.error {
+  background-color: var(--color-error-bg-light);
+  border: 1px solid var(--color-error-border-light);
+  color: var(--color-error-text-light);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+}
+
+.success {
+  background-color: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success-text);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Form card ---- */
+.form {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---- Sections ---- */
+.section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+/* Section headings — h2 variant (Properties, Reviews) */
+.sectionHeading {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.25rem;
+  color: var(--color-text-body);
+  font-weight: 600;
+}
+
+/* Section headings — h3 variant (Content pages) */
+.sectionHeadingSm {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.1rem;
+  color: var(--color-text-body);
+  font-weight: 600;
+}
+
+/* ---- Form groups ---- */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-body);
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-focus-ring);
+}
+
+.formGroup small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ---- Checkbox label ---- */
+.checkboxLabel {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500 !important;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: auto !important;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkboxLabel span {
+  user-select: none;
+}
+
+/* ---- Grid row ---- */
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* ---- Required / optional ---- */
+.required {
+  color: var(--color-danger);
+}
+
+.optional {
+  color: var(--color-text-muted);
+  font-weight: normal;
+  font-size: 0.875rem;
+}
+
+/* ---- Image preview ---- */
+.imagePreview {
+  margin-top: 1rem;
+  border: 2px dashed var(--color-border-input);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+}
+
+.imagePreview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+}
+
+/* ---- Actions footer ---- */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: var(--color-page-bg);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ---- Buttons ---- */
+.cancelButton {
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: var(--color-page-bg);
+  border-color: var(--color-border-input-hover);
+}
+
+.submitButton {
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.submitButton:disabled {
+  background-color: var(--color-text-disabled);
+  border-color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+  }
+}

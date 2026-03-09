@@ -236,3 +236,7 @@ export function getHero(opts) {
 export function putHero(data, opts) {
   return put(`/api/hero`, data, opts);
 }
+// cloudinary
+export function getCloudinarySignature(opts) {
+  return get("/api/cloudinary/sign-ml", opts);
+}

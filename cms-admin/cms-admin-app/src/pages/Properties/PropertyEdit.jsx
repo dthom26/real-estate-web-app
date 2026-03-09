@@ -15,6 +15,7 @@ function PropertyEditForm({ property, id }) {
     error: formError,
     handleChange,
     handleCheckboxChange,
+    addLibraryImages,
     handleSubmit,
   } = usePropertyForm(property, id);
 
@@ -113,7 +114,11 @@ function PropertyEditForm({ property, id }) {
         <section className={styles.section}>
           <h2>Images</h2>
 
-          <ImageUpload images={images} onChange={setImages} />
+          <ImageUpload
+            images={images}
+            onChange={setImages}
+            onAddLibraryImages={addLibraryImages}
+          />
 
           <div className={styles.formGroup}>
             <label htmlFor="alt">

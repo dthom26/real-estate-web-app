@@ -1,9 +1,15 @@
 import { useRef, useState } from "react";
 import styles from "./ImageUpload.module.css";
+import { useMediaLibrary } from "../../hooks/useMediaLibrary";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — must match Cloudinary and multer limits
 
-export default function ImageUpload({ images, onChange }) {
+export default function ImageUpload({ images, onChange, onAddLibraryImages }) {
+  // Hook to open the media library
+  const { openLibrary } = useMediaLibrary();
+
+  // Local state for drag-and-drop and size errors
+
   const dragIndex = useRef(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [sizeError, setSizeError] = useState(null);
@@ -78,7 +84,11 @@ export default function ImageUpload({ images, onChange }) {
             onDrop={() => handleDrop(index)}
           >
             <img
-              src={image.type === "existing" ? image.url : image.preview}
+              src={
+                image.type === "existing" || image.type === "library"
+                  ? image.url
+                  : image.preview
+              }
               alt={`Property image ${index + 1}`}
             />
             <button
@@ -104,6 +114,26 @@ export default function ImageUpload({ images, onChange }) {
           onChange={handleFileSelect}
         />
       </label>
+      <button
+        type="button"
+        onClick={() =>
+          openLibrary({
+            multiple: true,
+            onSelect: (assets) => {
+              // assets is an array of { url, public_id }
+              // Wrap each one in a "library" type so the form knows it doesn't need uploading
+              const libraryImages = assets.map((a) => ({
+                type: "library",
+                url: a.url,
+                public_id: a.public_id,
+              }));
+              onAddLibraryImages(libraryImages); // pass up to the form
+            },
+          })
+        }
+      >
+        Add from Library
+      </button>
     </div>
   );
 }

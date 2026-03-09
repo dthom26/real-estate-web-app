@@ -8,29 +8,39 @@
 .header h1 {
   margin: 0;
   font-size: 24px;
+  color: var(--color-text-heading);
 }
 
 .header button {
   padding: 8px 16px;
-  background: #3b82f6;
-  color: white;
+  background: var(--color-primary);
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 14px;
+  font-family: inherit;
+  transition: background 0.2s;
 }
 
 .header button:hover {
-  background: #2563eb;
+  background: var(--color-primary-hover);
+}
+
+/* Responsive table wrapper */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
 }
 
 table {
-  width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 
 thead {
@@ -47,25 +57,31 @@ th {
 
 td {
   padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border);
   font-size: 14px;
+}
+
+tr:hover td {
+  background: #f9fafb;
 }
 
 td img {
   width: 60px;
   height: 40px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 td button {
   padding: 6px 12px;
   margin-right: 6px;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 4px;
+  border: 1px solid var(--color-border-input);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 13px;
+  font-family: inherit;
+  transition: background 0.15s;
 }
 
 td button:hover {
@@ -79,4 +95,71 @@ td button:last-child {
 
 td button:last-child:hover {
   background: #fef2f2;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  /* Reflow table rows into labeled cards */
+  table {
+    min-width: 0;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  thead {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    visibility: hidden;
+  }
+
+  tbody tr {
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-top: none;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+  }
+
+  td:last-child {
+    border-bottom: none;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    min-width: 70px;
+    margin-right: 12px;
+  }
+
+  td:last-child::before {
+    display: none;
+  }
 }

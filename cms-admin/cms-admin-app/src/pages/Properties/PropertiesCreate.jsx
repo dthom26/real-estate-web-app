@@ -15,6 +15,7 @@ export default function PropertiesCreate() {
     handleChange,
     handleCheckboxChange,
     setImages,
+    addLibraryImages,
     handleSubmit,
   } = usePropertyForm(); // No args = create mode
 
@@ -112,22 +113,26 @@ export default function PropertiesCreate() {
         {/* Image Section */}
         <section className={styles.section}>
           <h2>Images</h2>
-          <ImageUpload images={images} onChange={setImages} />
+          <ImageUpload
+            images={images}
+            onChange={setImages}
+            onAddLibraryImages={addLibraryImages}
+          />
           <div className={styles.formGroup}>
-              <label htmlFor="alt">
-                Image Alt Text <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="text"
-                id="alt"
-                name="alt"
-                value={formData.alt}
-                onChange={handleChange}
-                placeholder="Beautiful home exterior"
-                required
-              />
-              <small>Describe the image for accessibility</small>
-            </div>
+            <label htmlFor="alt">
+              Image Alt Text <span className={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              id="alt"
+              name="alt"
+              value={formData.alt}
+              onChange={handleChange}
+              placeholder="Beautiful home exterior"
+              required
+            />
+            <small>Describe the image for accessibility</small>
+          </div>
         </section>
         {/* <section className={styles.section}>
           <h2>Image</h2>

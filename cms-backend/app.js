@@ -13,6 +13,7 @@ import uploadRoutes from "./routes/upload.js";
 import errorHandler from "./middleware/errorHandler.js";
 import csrfMiddleware from './middleware/csrf.js';
 import { ALLOWED_ORIGINS } from './config/env.js';
+import cloudinaryRoutes from "./routes/cloudinary.js";
 
 const app = express();
 
@@ -34,7 +35,7 @@ app.use("/api/hero", heroRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
-
+app.use("/api/cloudinary", cloudinaryRoutes);
 app.get("/", (req, res) => res.send("API is running!"));
 
 app.use(errorHandler);
