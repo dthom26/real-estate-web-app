@@ -22,8 +22,18 @@ export function useHeroForm(initialData = null) {
   // Image handling state
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(
-    initialData?.backgroundImage || null,
+    initialData?.backgroundImage?.url || null,
   );
+
+  const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
+
+  const handleLibrarySelect = (asset) => {
+    setImageFile(null); // discard any pending file upload
+    setImagePreview(asset.url); // show the library image as preview
+    setSelectedLibraryImage(asset); // store for submission
+    setSuccess(false);
+  };
+
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,11 +87,12 @@ export function useHeroForm(initialData = null) {
 
     try {
       // Step 1: Upload new background image if a new file was selected
-      let backgroundImage = initialData?.backgroundImage;
-      if (imageFile) {
-        const uploadResult = await uploadImage(imageFile);
-        backgroundImage = uploadResult.url;
-      }
+      let backgroundImage = initialData?.backgroundImage ?? null; // already { url, public_id }
+        if (selectedLibraryImage) {
+          backgroundImage = selectedLibraryImage; // { url, public_id } from widget
+        } else if (imageFile) {
+          backgroundImage = await uploadImage(imageFile); // { url, public_id } from upload endpoint
+        }
 
       // Step 2: Prepare hero data
       const heroData = {
@@ -115,6 +126,7 @@ export function useHeroForm(initialData = null) {
     handleChange,
     handleCheckboxChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   };
 }

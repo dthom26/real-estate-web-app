@@ -33,44 +33,48 @@ export default function PropertiesList() {
         </button>
       </div>
       {/* Table of properties will go here */}
-      <table>
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Address</th>
-            <th>Beds</th>
-            <th>Baths</th>
-            <th>Sqft</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* this will map over the properties array in the db and display that info*/}
-          {properties.map((property) => (
-            <tr key={property._id}>
-              <td>
-                <img src={property.image} alt={property.address} />
-              </td>
-              <td>{property.address}</td>
-              <td>{property.beds}</td>
-              <td>{property.baths}</td>
-              <td>{property.sqft}</td>
-              <td>${property.price}</td>
-              <td>
-                <button
-                  onClick={() =>
-                    navigate(`/admin/properties/${property._id}/edit`)
-                  }
-                >
-                  Edit
-                </button>
-                <button onClick={() => openModal(property._id)}>Delete</button>
-              </td>
+      <div className={styles.tableWrap}>
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Address</th>
+              <th>Beds</th>
+              <th>Baths</th>
+              <th>Sqft</th>
+              <th>Price</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {/* this will map over the properties array in the db and display that info*/}
+            {properties.map((property) => (
+              <tr key={property._id}>
+                <td data-label="Image">
+                  <img src={property.image} alt={property.address} />
+                </td>
+                <td data-label="Address">{property.address}</td>
+                <td data-label="Beds">{property.beds}</td>
+                <td data-label="Baths">{property.baths}</td>
+                <td data-label="Sqft">{property.sqft}</td>
+                <td data-label="Price">${property.price}</td>
+                <td>
+                  <button
+                    onClick={() =>
+                      navigate(`/admin/properties/${property._id}/edit`)
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => openModal(property._id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <ConfirmDeleteModal
         isOpen={isOpen}
         onClose={closeModal}

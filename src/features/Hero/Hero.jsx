@@ -13,8 +13,8 @@ export default function Hero() {
     <section
       className={styles.heroSection}
       style={
-        data.backgroundImage
-          ? { "--hero-bg": `url(${data.backgroundImage})` }
+        data.backgroundImage?.url
+          ? { "--hero-bg": `url(${data.backgroundImage.url})` }
           : undefined
       }
     >

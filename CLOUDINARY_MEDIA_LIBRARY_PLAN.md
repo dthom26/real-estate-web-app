@@ -40,29 +40,59 @@ Every image input in the CMS gets two paths:
 
 ---
 
-## Current State
+## API Shape Decision — Option B (Always Return Full Objects)
 
-| Section    | Image field       | Stores               | Widget-ready?                   |
-| ---------- | ----------------- | -------------------- | ------------------------------- |
-| Properties | `images` (array)  | `{ url, public_id }` | Almost — needs UI               |
-| Services   | `image`           | `{ url, public_id }` | Almost — needs UI               |
-| Hero       | `backgroundImage` | URL string only      | No — needs model + hook updates |
-| About      | `image`           | URL string only      | No — needs model + hook updates |
+Since we are in development and have no legacy data, we go with **Option B**:
+the API always returns the full `{ url, public_id }` object for image fields. The
+public frontend is updated to read `.url` from the object wherever it renders an
+image. There is no serialization logic in the backend controllers, and no legacy
+string fallbacks anywhere in the codebase.
+
+**Why Option B wins here:**
+
+- No migration scripts, no defensive fallback chains in controllers
+- The API shape is consistent and self-documenting
+- If you ever want to display alt text or other image metadata later, it's already
+  in the object — no API change required
+- The number of public frontend lines to change is tiny (two files, two lines each)
 
 ---
 
-## Phase 1 — Backend: Media Library Signing Endpoint
+## Current State
 
-The ML widget requires a server-generated signature — you cannot sign it client-side
-without exposing your `CLOUDINARY_API_SECRET`. This endpoint generates a
-short-lived signature and returns it to the admin frontend.
+| Section    | Image field       | Stores               | Status                      |
+| ---------- | ----------------- | -------------------- | --------------------------- |
+| Properties | `images` (array)  | `{ url, public_id }` | ✅ Model + forms done       |
+| Services   | `image`           | `{ url, public_id }` | ✅ Model + forms done       |
+| Hero       | `backgroundImage` | `{ url, public_id }` | ✅ Model done, forms remain |
+| About      | `image`           | `{ url, public_id }` | ✅ Model done, forms remain |
 
-**Why a fresh signature per open:** Cloudinary signatures expire (5–15 minutes).
-The frontend must fetch a fresh one each time the admin clicks "Choose from Library".
+---
 
-### 1a — New controller
+## Phase 1 — Backend: Media Library Signing Endpoint ✅ COMPLETE
 
-**Create:** `cms-backend/controllers/cloudinaryController.js`
+The Cloudinary Media Library widget cannot be opened without a server-generated
+signature. This is a security requirement — the `CLOUDINARY_API_SECRET` must never
+leave the server, so the frontend asks your own backend to sign the request.
+
+**How it works:**
+
+1. Admin clicks "Choose from Library"
+2. Frontend calls `GET /api/cloudinary/sign-ml`
+3. Backend generates a cryptographic signature using `CLOUDINARY_API_SECRET` and
+   the current Unix timestamp, then returns `{ timestamp, signature, api_key, cloud_name }`
+4. Frontend passes these to `window.cloudinary.openMediaLibrary(...)` — Cloudinary
+   verifies the signature server-side before allowing the widget to open
+
+The signature includes a timestamp so it expires in minutes. A fresh one is fetched
+every time the admin opens the widget.
+
+### 1a — Controller ✅
+
+**File:** `cms-backend/controllers/cloudinaryController.js`
+
+> ⚠️ **Import path bug to fix:** The file currently imports from
+> `"../config/cloudinaryConfig.js"` which does not exist. Change to `"../config/env.js"`.
 
 ```js
 import crypto from "crypto";
@@ -70,84 +100,54 @@ import {
   CLOUDINARY_API_SECRET,
   CLOUDINARY_API_KEY,
   CLOUDINARY_CLOUD_NAME,
-} from "../config/env.js";
-
-export const signMediaLibrary = (req, res) => {
-  const timestamp = Math.floor(Date.now() / 1000);
-  const signature = crypto
-    .createHash("sha256")
-    .update(`timestamp=${timestamp}${CLOUDINARY_API_SECRET}`)
-    .digest("hex");
-
-  res.json({
-    timestamp,
-    signature,
-    api_key: CLOUDINARY_API_KEY,
-    cloud_name: CLOUDINARY_CLOUD_NAME,
-  });
-};
+} from "../config/env.js"; // ← was ../config/cloudinaryConfig.js — fix this
 ```
 
-### 1b — New route
+The signing logic itself is correct — just the import path needs updating.
 
-**Create:** `cms-backend/routes/cloudinary.js`
+### 1b — Route ✅
+
+**File:** `cms-backend/routes/cloudinary.js`
+
+> ⚠️ **Import path bug to fix:** The file currently imports from
+> `"../middleware/authMiddleware.js"` which does not exist. Change to `"../middleware/auth.js"`.
 
 ```js
-import express from "express";
-import { signMediaLibrary } from "../controllers/cloudinaryController.js";
-import { authenticateToken } from "../middleware/auth.js";
-
-const router = express.Router();
-
-// GET /api/cloudinary/sign-ml — generate ML widget signature (PROTECTED)
-router.get("/sign-ml", authenticateToken, signMediaLibrary);
-
-export default router;
+import { authenticateToken } from "../middleware/auth.js"; // ← was authMiddleware.js — fix this
 ```
 
-### 1c — Register in `app.js`
+The route itself (`GET /sign-ml` protected by `authenticateToken`) is correct.
 
-```js
-import cloudinaryRoutes from "./routes/cloudinary.js";
-app.use("/api/cloudinary", cloudinaryRoutes);
-```
+### 1c — Registered in `app.js` ✅
 
-### 1d — Verify `env.js` exports
+`app.use("/api/cloudinary", cloudinaryRoutes)` is already in `app.js`.
 
-Check that `CLOUDINARY_API_KEY` and `CLOUDINARY_CLOUD_NAME` are exported from
-`cms-backend/config/env.js`. They're already used by the Cloudinary SDK config
-(`config/cloudinary.js`) so they should exist — just confirm they're named exports
-available for the controller to import.
+### 1d — `env.js` exports ✅
 
-### 1e — Add to `api.js`
+`CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and `CLOUDINARY_CLOUD_NAME` are all
+exported from `cms-backend/config/env.js`. No changes needed.
 
-**File:** `cms-admin/cms-admin-app/src/services/api.js`
+### 1e — Admin `api.js` ✅
 
-```js
-export function getCloudinarySignature(opts) {
-  return get("/api/cloudinary/sign-ml", opts);
-}
-```
+`getCloudinarySignature()` is already exported from
+`cms-admin/cms-admin-app/src/services/api.js`.
 
 ---
 
-## Phase 2 — Upgrade Hero + About Models
+## Phase 2 — Upgrade Hero + About Models ✅ COMPLETE
 
-Both currently store image fields as plain URL strings. To be consistent with
-Properties and Services — and to make the widget output useful — upgrade them to
-`{ url, public_id }` objects.
+### Why both fields needed upgrading
 
-### 2a — Hero model
+Properties and Services already stored their images as `{ url, public_id }` objects
+because they were built during the `CLOUDINARY_PUBLIC_ID_PLAN` phase. Hero and About
+were built earlier and stored image URLs as plain strings. For consistency — and
+because the Media Library widget returns `{ url, public_id }` — both were upgraded.
+
+### 2a — Hero model ✅
 
 **File:** `cms-backend/models/hero.js`
 
-**Find:**
-
-```js
-backgroundImage: { type: String, required: false },
-```
-
-**Replace with:**
+`backgroundImage` is now a nested object schema:
 
 ```js
 backgroundImage: {
@@ -156,139 +156,115 @@ backgroundImage: {
 },
 ```
 
-### 2b — About model
+Neither sub-field is `required`, so saving the hero without an image (or before
+the admin uploads one) will not throw a validation error.
+
+### 2b — About model ✅
 
 **File:** `cms-backend/models/about.js`
 
-**Find:**
+Same change — `image` is now `{ url: String, public_id: String }`.
 
-```js
-image: { type: String, required: false },
-```
-
-**Replace with:**
-
-```js
-image: {
-  url: { type: String },
-  public_id: { type: String },
-},
-```
-
-### 2c — Hero + About validators
+### 2c — Validators ✅
 
 **Files:** `cms-backend/middleware/validators/heroValidator.js` and `aboutValidator.js`
 
-Check for any `backgroundImage` or `image` validators that check `.isString()` —
-if they exist, add `.optional()` and update to validate the object shape or just
-remove the image field validation (both fields are optional on their models).
+Both validators use a custom validator that accepts the `{ url, public_id }` object
+shape. They currently still allow the old string shape as a fallback — since we have
+no legacy data, you can remove the string fallback at any time:
 
-### 2d — Hero + About controllers — serialization for public API
+```js
+// Current (keeps legacy string support — safe to clean up)
+body("backgroundImage")
+  .optional()
+  .custom((value) => {
+    if (typeof value === "string") return true; // ← remove this line when ready
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      typeof value.url === "string" &&
+      typeof value.public_id === "string"
+    ) {
+      return true;
+    }
+    throw new Error("...");
+  }),
+```
 
-The public frontend reads `hero.backgroundImage` and `about.image` as plain URL
-strings (e.g. `<img src={hero.backgroundImage} />`). After this model change,
-those fields are objects. You have two choices:
+Not blocking — clean up when convenient.
 
-**Option A (Recommended):** Serialize in the controller GET, update public frontend.
+### 2d — Controllers ✅ (Option B — return full objects)
 
-- `getHero` — serialize: `backgroundImage: heroData.backgroundImage?.url ?? heroData.backgroundImage ?? null`
-  (the fallback chain handles the old string shape during transition)
-- `getAboutInfo` — same: `image: aboutData.image?.url ?? aboutData.image ?? null`
-- Update the public frontend hooks to expect a URL string (no change needed — they
-  already expect a string, and the serialized response gives them a string)
-- The CMS admin calls the same endpoints but for editing purposes needs the full
-  object — add a `?full=true` query param check in the controllers, or create
-  separate `/admin` prefixed endpoints
+**Files:** `cms-backend/controllers/heroController.js` and `aboutController.js`
 
-**Option B (Simpler):** Always return full objects, update public frontend.
+Both controllers already return the raw database document with no serialization.
+Under Option B this is exactly what we want — the full `{ url, public_id }` object
+is returned to any caller (both the public site and the admin). No changes needed.
 
-- Change `hero.backgroundImage` → `hero.backgroundImage?.url` in `src/hooks/useHero.js`
-  and wherever it renders in the public site
-- No serialization needed in the controllers
-- One less moving part
+### 2e — No migration needed
 
-Option B is less code — only a few lines in the public frontend. Recommended.
-
-**Files to update in the public frontend (Option B):**
-
-- `src/hooks/useHero.js` — if it passes `backgroundImage` directly to a component,
-  change to `backgroundImage?.url`
-- `src/features/Hero/` — wherever `backgroundImage` is used as `<img src>` or
-  inline style `backgroundImage: url(...)`
-- `src/hooks/useAbout.js` — same for `image`
-- `src/features/About/` — wherever `image` is used as `<img src>`
-
-### 2e — Migration
-
-Hero and About are singletons containing a single document each. After the model
-change, the existing document has `backgroundImage: "https://..."` (a plain string
-at the wrong path for Mongoose). The field is not `required`, so the app won't
-crash — the image just won't load until the admin resaves the form.
-
-**Simplest migration:** The admin opens Hero Settings and About Settings in the CMS,
-and saves each form once. This re-uploads (or reselects from library) the image in
-the new `{ url, public_id }` shape. No migration script needed.
-
-> **If you want a migration script anyway** (to avoid the image disappearing even
-> briefly), use the same raw MongoDB driver pattern as the propert/service migration
-> plan: `mongoose.connection.collection("heroes").updateMany(...)` where
-> `backgroundImage` is a string → convert to `{ url: backgroundImage, public_id: "legacy/unknown" }`.
+We are in development. All test images will be deleted and re-uploaded from scratch
+in the new `{ url, public_id }` shape. No migration scripts are required.
 
 ---
 
-## Phase 3 — Media Library Widget Script
-
-The Cloudinary ML widget is distributed as a hosted script. Load it once in the
-admin app's `index.html`.
+## Phase 3 — Media Library Widget Script ✅ TODO
 
 **File:** `cms-admin/cms-admin-app/index.html`
 
-Add before `</body>`:
+The Cloudinary Media Library widget is not an npm package — Cloudinary distributes
+it as a hosted script that you load from their CDN. When the page loads, this script
+attaches itself to `window.cloudinary`, which is what your hook will call when the
+admin clicks "Choose from Library".
+
+Add the script tag before `</body>`:
 
 ```html
 <script src="https://media-library.cloudinary.com/global/all.js"></script>
 ```
 
-This makes `window.cloudinary` available globally. The script is loaded from
-Cloudinary's CDN — it does not require installation via npm.
+**Why before `</body>` (not `<head>`)?** Scripts in `<head>` block the page from
+rendering until they download. Placing it before `</body>` lets the React app mount
+and display its UI immediately. The library widget script loads in parallel and will
+be ready long before the admin has a chance to click "Choose from Library".
 
 ---
 
-## Phase 4 — `useMediaLibrary` Hook
-
-Create a single hook that handles the full signature-fetch + widget-open flow.
-Every image input that needs library access imports this hook.
+## Phase 4 — `useMediaLibrary` Hook ✅ TODO
 
 **Create:** `cms-admin/cms-admin-app/src/hooks/useMediaLibrary.js`
+
+This is the single piece of code that every image input in the CMS will share. It
+handles the two-step open sequence: fetch a fresh signature → open the widget.
 
 ```js
 import { getCloudinarySignature } from "../services/api";
 
-/**
- * Hook that exposes openLibrary() — fetches a fresh signature and opens
- * the Cloudinary Media Library widget.
- *
- * @returns {{ openLibrary: Function, isLoading: boolean }}
- */
 export function useMediaLibrary() {
   const openLibrary = async ({ onSelect, multiple = false }) => {
+    // Step 1: Get a fresh signed token from your backend.
+    // The widget will not open without this — Cloudinary rejects unsigned requests.
     const { timestamp, signature, api_key, cloud_name } =
       await getCloudinarySignature();
 
+    // Step 2: Open the widget. Cloudinary renders it as a full-screen overlay.
     window.cloudinary.openMediaLibrary(
       {
         cloud_name,
         api_key,
         timestamp,
         signature,
-        multiple,
+        multiple, // true = multi-select (Properties), false = single (Hero/About/Service)
       },
       {
+        // insertHandler fires when the admin clicks "Insert" inside the widget.
         insertHandler: (data) => {
+          // data.assets is always an array, even in single-select mode.
           const assets = data.assets.map((a) => ({
-            url: a.secure_url,
+            url: a.secure_url, // always use secure_url — http URLs are deprecated
             public_id: a.public_id,
           }));
+          // For single-select, unwrap the array so callers get a single object.
           onSelect(multiple ? assets : assets[0]);
         },
       },
@@ -299,31 +275,249 @@ export function useMediaLibrary() {
 }
 ```
 
-> **`multiple: false`** — used for Hero, About, Service (single image)  
-> **`multiple: true`** — used for Properties (multi-image array)
+**Key design point:** `openLibrary` takes an `onSelect` callback. Each form decides
+what to do with the selected asset(s) — `useMediaLibrary` stays generic and reusable.
+
+> **`multiple: false`** — Hero, About, Service (single image fields)  
+> **`multiple: true`** — Properties (`images` array)
 
 ---
 
 ## Phase 5 — Update Image Input Components
 
-### 5a — `ImageUpload.jsx` (multi-image, Properties)
+### 5a — `ImageUpload.jsx` (Properties — multi-image) ✅ TODO
 
 **File:** `cms-admin/cms-admin-app/src/components/ImageUpload/ImageUpload.jsx`
 
-Add an "Add from Library" button next to the existing file input button.
+This component handles the image list for property forms. It currently only supports
+uploading files from disk. Add an "Add from Library" button beside the file input.
 
-- Import `useMediaLibrary`
-- Call `openLibrary({ multiple: true, onSelect })` when the button is clicked
-- In `onSelect`, receive an array of `{ url, public_id }` objects and append them
-  to the images list as `{ type: "library", url, public_id }`
-- Thumbnails render correctly because they already check `image.url` for existing items —
-  `type: "library"` images also have `.url` so the same path works
+**What to add:**
 
-**In `usePropertyForm.js`**, the `finalImages` builder already handles this
-correctly because library images have `url` and `public_id` — treat them the same
-as `type: "existing"`:
+- Import `useMediaLibrary` and call `const { openLibrary } = useMediaLibrary()` at
+  the top of the component
+- Add a second button next to the existing file input:
+  ```jsx
+  <button
+    type="button"
+    onClick={() =>
+      openLibrary({
+        multiple: true,
+        onSelect: (assets) => {
+          // assets is an array of { url, public_id }
+          // Wrap each one in a "library" type so the form knows it doesn't need uploading
+          const libraryImages = assets.map((a) => ({
+            type: "library",
+            url: a.url,
+            public_id: a.public_id,
+          }));
+          onAddLibraryImages(libraryImages); // pass up to the form
+        },
+      })
+    }
+  >
+    Add from Library
+  </button>
+  ```
+
+**Why `type: "library"`?** The images array in `usePropertyForm` tracks each image's
+origin. `type: "existing"` means it came from the database, `type: "new"` means it's
+a local file pending upload, and `type: "library"` means it was picked from Cloudinary
+and already has a URL — no upload step needed when the form submits.
+
+### 5b — Single-image sections (Hero, About, Services) ✅ TODO
+
+For Hero, About, and both Service forms, the library button is a simpler addition —
+one button, one selected image. Add it directly in each form's JSX.
+
+**Pattern (same for all four):**
+
+```jsx
+import { useMediaLibrary } from "../../../hooks/useMediaLibrary";
+
+// Inside the component:
+const { openLibrary } = useMediaLibrary();
+
+// In the image section of the form:
+<input type="file" onChange={handleImageChange} />
+<button
+  type="button"
+  onClick={() =>
+    openLibrary({
+      multiple: false,
+      onSelect: (asset) => handleLibrarySelect(asset),
+    })
+  }
+>
+  Choose from Library
+</button>
+```
+
+`handleLibrarySelect` is added in the form hooks (Phase 6). The JSX just wires the
+button click to the hook's callback.
+
+---
+
+## Phase 6 — Update Form Hooks
+
+### 6a — `useHeroForm.js` ✅ TODO
+
+**File:** `cms-admin/cms-admin-app/src/hooks/useHeroForm.js`
+
+There are two bugs here and one new feature to add:
+
+**Bug 1 — imagePreview is broken with the new model shape.**  
+Currently:
 
 ```js
+const [imagePreview, setImagePreview] = useState(
+  initialData?.backgroundImage || null, // ← backgroundImage is now { url, public_id }, not a string
+);
+```
+
+A `src` attribute set to `"[object Object]"` will show a broken image. Fix:
+
+```js
+const [imagePreview, setImagePreview] = useState(
+  initialData?.backgroundImage?.url || null,
+);
+```
+
+**Bug 2 — handleSubmit sends a URL string instead of `{ url, public_id }`.**  
+Currently:
+
+```js
+let backgroundImage = initialData?.backgroundImage; // ← this is now { url, public_id } — OK as fallback
+if (imageFile) {
+  const uploadResult = await uploadImage(imageFile);
+  backgroundImage = uploadResult.url; // ← BUG: discards public_id, sends string
+}
+```
+
+Fix:
+
+```js
+let backgroundImage = initialData?.backgroundImage ?? null; // already { url, public_id }
+if (selectedLibraryImage) {
+  backgroundImage = selectedLibraryImage; // { url, public_id } from widget
+} else if (imageFile) {
+  backgroundImage = await uploadImage(imageFile); // { url, public_id } from upload endpoint
+}
+```
+
+**New feature — library select state and handler:**
+
+```js
+const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
+
+const handleLibrarySelect = (asset) => {
+  setImageFile(null); // discard any pending file upload
+  setImagePreview(asset.url); // show the library image as preview
+  setSelectedLibraryImage(asset); // store for submission
+  setSuccess(false);
+};
+```
+
+Return `handleLibrarySelect` from the hook so `HeroSection.jsx` can wire it to the
+"Choose from Library" button.
+
+### 6b — `useAboutForm.js` ✅ TODO
+
+**File:** `cms-admin/cms-admin-app/src/hooks/useAboutForm.js`
+
+Same bugs and same fix pattern as `useHeroForm.js`, but for the `image` field:
+
+**Bug 1 — imagePreview:**
+
+```js
+// Before:
+const [imagePreview, setImagePreview] = useState(initialData?.image || null);
+// After:
+const [imagePreview, setImagePreview] = useState(
+  initialData?.image?.url || null,
+);
+```
+
+**Bug 2 — handleSubmit loses public_id:**
+
+```js
+// Before:
+let imageUrl = initialData?.image; // raw string stored in old shape
+if (imageFile) {
+  const uploadResult = await uploadImage(imageFile);
+  imageUrl = uploadResult.url; // ← loses public_id
+}
+// send: image: imageUrl (string)
+
+// After:
+let imageData = initialData?.image ?? null; // now { url, public_id } from DB
+if (selectedLibraryImage) {
+  imageData = selectedLibraryImage;
+} else if (imageFile) {
+  imageData = await uploadImage(imageFile); // returns { url, public_id }
+}
+// send: image: imageData (object)
+```
+
+**New state and handler** (same pattern as Hero):
+
+```js
+const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
+
+const handleLibrarySelect = (asset) => {
+  setImageFile(null);
+  setImagePreview(asset.url);
+  setSelectedLibraryImage(asset);
+  setSuccess(false);
+};
+```
+
+### 6c — `useServiceForm.js` ✅ TODO
+
+**File:** `cms-admin/cms-admin-app/src/hooks/useServiceForm.js`
+
+The service form already sends `{ url, public_id }` on the upload path — no bugs to
+fix. Just add the library path alongside:
+
+```js
+const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
+
+const handleLibrarySelect = (asset) => {
+  setImageFile(null);
+  setImagePreview(asset.url);
+  setSelectedLibraryImage(asset);
+};
+```
+
+In `handleSubmit`, add the priority check before the existing `if (imageFile)` block:
+
+```js
+let imageData = formData.image; // existing { url, public_id }
+if (selectedLibraryImage) {
+  imageData = selectedLibraryImage;
+} else if (imageFile) {
+  imageData = await uploadImage(imageFile);
+}
+```
+
+### 6d — `usePropertyForm.js` ✅ TODO
+
+**File:** `cms-admin/cms-admin-app/src/hooks/usePropertyForm.js`
+
+The `finalImages` builder currently only handles `type: "existing"` and `type: "new"`.
+Library images (`type: "library"`) are already in Cloudinary and must be treated the
+same as existing images — pass through their `url` and `public_id` directly, with no
+upload step. Update the map:
+
+```js
+// Before:
+const finalImages = images.map((img) => {
+  if (img.type === "existing")
+    return { url: img.url, public_id: img.public_id };
+  return newUrls[newIndex++];
+});
+
+// After:
 const finalImages = images.map((img) => {
   if (img.type === "existing" || img.type === "library")
     return { url: img.url, public_id: img.public_id };
@@ -331,178 +525,117 @@ const finalImages = images.map((img) => {
 });
 ```
 
-### 5b — Single-image sections (Hero, About, Services)
-
-For these three sections the library button is simpler — one button, one selected
-image. The cleanest approach is to add the button directly in each form's JSX with
-the hook, rather than creating a new wrapper component. This keeps the surface area
-small.
-
-**Pattern for each section:**
-
-In the form JSX (e.g. `HeroSection.jsx`):
-
-```jsx
-const { openLibrary } = useMediaLibrary();
-
-// In the image section:
-<input type="file" onChange={handleImageChange} />
-<button
-  type="button"
-  onClick={() => openLibrary({
-    multiple: false,
-    onSelect: (asset) => handleLibrarySelect(asset),
-  })}
->
-  Choose from Library
-</button>
-```
-
-Add `handleLibrarySelect` to each form hook (Hero, About, Service):
+You also need to expose an `addLibraryImages` handler to be called from `ImageUpload.jsx`
+when the admin selects images from the widget:
 
 ```js
-const handleLibrarySelect = (asset) => {
-  // asset = { url, public_id }
-  setImageFile(null); // clear any pending file upload
-  setImagePreview(asset.url);
-  // store the full object for submission:
-  setSelectedLibraryImage(asset);
+const addLibraryImages = (libraryImages) => {
+  // libraryImages = [{ type: "library", url, public_id }, ...]
+  setImages((prev) => [...prev, ...libraryImages]);
 };
 ```
 
-On submit, check `selectedLibraryImage` before `imageFile`:
-
-```js
-let imageData = formData.image; // existing { url, public_id }
-if (selectedLibraryImage) {
-  imageData = selectedLibraryImage; // picked from library
-} else if (imageFile) {
-  imageData = await uploadImage(imageFile); // uploaded from disk
-}
-```
+Return `addLibraryImages` from the hook so `ImageUpload.jsx` can call it.
 
 ---
 
-## Phase 6 — Update Form Hooks
+## Phase 7 — Update Public Frontend  TODO
 
-### 6a — `useHeroForm.js`
+**Decision: Option B.** The API returns the full `{ url, public_id }` object. The
+public site just needs to read `.url` from it wherever it renders an image.
 
-Changes needed:
+### 7a — `src/features/Hero/Hero.jsx`
 
-1. **Preview init** — backward compatible with old string shape:
-   ```js
-   const [imagePreview, setImagePreview] = useState(
-     initialData?.backgroundImage?.url || initialData?.backgroundImage || null,
-   );
-   ```
-2. **New state** — `const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);`
-3. **`handleLibrarySelect`** — sets preview + stores asset object, clears `imageFile`
-4. **Submit logic** — priority: `selectedLibraryImage` > `imageFile` > existing
-5. **Send `{ url, public_id }`** to `putHero` instead of a URL string
+**File:** `src/features/Hero/Hero.jsx`
 
-### 6b — `useAboutForm.js`
+Currently:
 
-Same changes as `useHeroForm.js` but for the `image` field.
-
-Current submit code:
-
-```js
-let imageUrl = initialData?.image;
-if (imageFile) {
-  const uploadResult = await uploadImage(imageFile);
-  imageUrl = uploadResult.url; // ← this loses public_id
+```jsx
+style={
+  data.backgroundImage
+    ? { "--hero-bg": `url(${data.backgroundImage})` } // ← Object renders as "[object Object]"
+    : undefined
 }
 ```
 
-Updated submit code:
+Fix:
 
-```js
-let imageData = initialData?.image?.url
-  ? initialData.image // already { url, public_id }
-  : { url: initialData?.image, public_id: "legacy/unknown" }; // old string shape
-if (selectedLibraryImage) {
-  imageData = selectedLibraryImage;
-} else if (imageFile) {
-  imageData = await uploadImage(imageFile); // returns { url, public_id }
+```jsx
+style={
+  data.backgroundImage?.url
+    ? { "--hero-bg": `url(${data.backgroundImage.url})` }
+    : undefined
 }
 ```
 
-Send `image: imageData` to `putAboutInfo`.
+`src/hooks/useHero.js` does not need to change — it just fetches and returns `data`
+as-is. The component is the only consumer that renders the image.
 
-### 6c — `useServiceForm.js`
+### 7b — `src/features/About/About.jsx`
 
-Already uses `{ url, public_id }` for the upload path. Just add:
+**File:** `src/features/About/About.jsx`
 
-- `selectedLibraryImage` state
-- `handleLibrarySelect` function
-- Priority check in `handleSubmit` (`selectedLibraryImage` before `imageFile`)
+Currently:
 
-### 6d — `usePropertyForm.js`
-
-Update `finalImages` builder as described in Phase 5a:
-
-```js
-if (img.type === "existing" || img.type === "library")
-  return { url: img.url, public_id: img.public_id };
+```jsx
+<TextImageSection.Image
+  src={data.image} // ← passes { url, public_id } object as src — broken
+  alt={data.header}
+/>
 ```
 
----
+Fix:
 
-## Phase 7 — Update Public Frontend (if using Option B from Phase 2d)
+```jsx
+<TextImageSection.Image src={data.image?.url} alt={data.header} />
+```
 
-**Files to check and update in `src/`:**
-
-- `src/hooks/useHero.js` — check how `backgroundImage` is returned/passed
-- `src/features/Hero/` components — change `hero.backgroundImage` to `hero.backgroundImage?.url`
-  wherever it's used as `src` or in a CSS `background-image` style
-- `src/hooks/useAbout.js` — same for `image`
-- `src/features/About/` components — change `about.image` to `about.image?.url`
-
-These are read-only changes on the public site — no form logic to update.
+`src/hooks/useAbout.js` does not need to change.
 
 ---
 
 ## File Change Summary
 
-| #   | File                                                                    | What changes                                                   |
-| --- | ----------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 1   | `cms-backend/controllers/cloudinaryController.js`                       | **NEW** — signing endpoint                                     |
-| 2   | `cms-backend/routes/cloudinary.js`                                      | **NEW** — route for signing endpoint                           |
-| 3   | `cms-backend/app.js`                                                    | Register new cloudinary route                                  |
-| 4   | `cms-backend/config/env.js`                                             | Verify `CLOUDINARY_API_KEY` + `CLOUDINARY_CLOUD_NAME` exported |
-| 5   | `cms-backend/models/hero.js`                                            | `backgroundImage: String` → `{ url, public_id }`               |
-| 6   | `cms-backend/models/about.js`                                           | `image: String` → `{ url, public_id }`                         |
-| 7   | `cms-backend/middleware/validators/heroValidator.js`                    | Remove/update backgroundImage string check                     |
-| 8   | `cms-backend/middleware/validators/aboutValidator.js`                   | Remove/update image string check                               |
-| 9   | `cms-admin/cms-admin-app/index.html`                                    | Add Cloudinary ML widget script tag                            |
-| 10  | `cms-admin/cms-admin-app/src/services/api.js`                           | Add `getCloudinarySignature()`                                 |
-| 11  | `cms-admin/cms-admin-app/src/hooks/useMediaLibrary.js`                  | **NEW** — widget open logic                                    |
-| 12  | `cms-admin/cms-admin-app/src/components/ImageUpload/ImageUpload.jsx`    | Add "Add from Library" button                                  |
-| 13  | `cms-admin/cms-admin-app/src/hooks/usePropertyForm.js`                  | Handle `type: "library"` in `finalImages`                      |
-| 14  | `cms-admin/cms-admin-app/src/hooks/useHeroForm.js`                      | Library select + `{ url, public_id }` submission               |
-| 15  | `cms-admin/cms-admin-app/src/hooks/useAboutForm.js`                     | Library select + `{ url, public_id }` submission               |
-| 16  | `cms-admin/cms-admin-app/src/hooks/useServiceForm.js`                   | Add library select path                                        |
-| 17  | `cms-admin/cms-admin-app/src/pages/Content/HeroSection/HeroSection.jsx` | "Choose from Library" button                                   |
-| 18  | `cms-admin/cms-admin-app/src/pages/Content/About/About.jsx`             | "Choose from Library" button                                   |
-| 19  | `cms-admin/cms-admin-app/src/pages/Services/ServicesCreate.jsx`         | "Choose from Library" button                                   |
-| 20  | `cms-admin/cms-admin-app/src/pages/Services/ServiceEdit.jsx`            | "Choose from Library" button                                   |
-| 21  | `src/hooks/useHero.js` + Hero components                                | `.url` extraction for public site                              |
-| 22  | `src/hooks/useAbout.js` + About components                              | `.url` extraction for public site                              |
+| #   | File                                                                    | Status  | What changes                                                      |
+| --- | ----------------------------------------------------------------------- | ------- | ----------------------------------------------------------------- |
+| 1   | `cms-backend/controllers/cloudinaryController.js`                       | ⚠️ Fix  | Fix import path: `cloudinaryConfig.js` → `env.js`                 |
+| 2   | `cms-backend/routes/cloudinary.js`                                      | ⚠️ Fix  | Fix import path: `authMiddleware.js` → `auth.js`                  |
+| 3   | `cms-backend/app.js`                                                    | ✅ Done | cloudinary route already registered                               |
+| 4   | `cms-backend/config/env.js`                                             | ✅ Done | All Cloudinary vars exported                                      |
+| 5   | `cms-backend/models/hero.js`                                            | ✅ Done | `backgroundImage: { url, public_id }`                             |
+| 6   | `cms-backend/models/about.js`                                           | ✅ Done | `image: { url, public_id }`                                       |
+| 7   | `cms-backend/middleware/validators/heroValidator.js`                    | ✅ Done | Accepts object shape (legacy string fallback can be cleaned up)   |
+| 8   | `cms-backend/middleware/validators/aboutValidator.js`                   | ✅ Done | Same                                                              |
+| 9   | `cms-admin/cms-admin-app/index.html`                                    | ❌ TODO | Add Cloudinary ML widget script tag before `</body>`              |
+| 10  | `cms-admin/cms-admin-app/src/services/api.js`                           | ✅ Done | `getCloudinarySignature()` already added                          |
+| 11  | `cms-admin/cms-admin-app/src/hooks/useMediaLibrary.js`                  | ❌ TODO | **NEW** — widget open logic (Phase 4)                             |
+| 12  | `cms-admin/cms-admin-app/src/components/ImageUpload/ImageUpload.jsx`    | ❌ TODO | Add "Add from Library" button, call `addLibraryImages` (Phase 5a) |
+| 13  | `cms-admin/cms-admin-app/src/hooks/usePropertyForm.js`                  | ❌ TODO | Handle `type: "library"`, expose `addLibraryImages` (Phase 6d)    |
+| 14  | `cms-admin/cms-admin-app/src/hooks/useHeroForm.js`                      | ❌ TODO | Fix preview init, fix submit, add library select path (Phase 6a)  |
+| 15  | `cms-admin/cms-admin-app/src/hooks/useAboutForm.js`                     | ❌ TODO | Fix preview init, fix submit, add library select path (Phase 6b)  |
+| 16  | `cms-admin/cms-admin-app/src/hooks/useServiceForm.js`                   | ❌ TODO | Add library select path (Phase 6c)                                |
+| 17  | `cms-admin/cms-admin-app/src/pages/Content/HeroSection/HeroSection.jsx` | ❌ TODO | "Choose from Library" button (Phase 5b)                           |
+| 18  | `cms-admin/cms-admin-app/src/pages/Content/About/About.jsx`             | ❌ TODO | "Choose from Library" button (Phase 5b)                           |
+| 19  | `cms-admin/cms-admin-app/src/pages/Services/ServicesCreate.jsx`         | ❌ TODO | "Choose from Library" button (Phase 5b)                           |
+| 20  | `cms-admin/cms-admin-app/src/pages/Services/ServiceEdit.jsx`            | ❌ TODO | "Choose from Library" button (Phase 5b)                           |
+| 21  | `src/features/Hero/Hero.jsx`                                            | ❌ TODO | `data.backgroundImage` → `data.backgroundImage?.url` (Phase 7a)   |
+| 22  | `src/features/About/About.jsx`                                          | ❌ TODO | `data.image` → `data.image?.url` (Phase 7b)                       |
 
 ---
 
 ## Testing Checklist
 
-- [ ] Click "Choose from Library" on the Hero form — widget opens, select an image, preview updates, save → MongoDB stores `{ url, public_id }`
-- [ ] Click "Choose from Library" on the About form — same
+- [ ] `GET /api/cloudinary/sign-ml` returns `{ timestamp, signature, api_key, cloud_name }` (test with Postman or browser while logged in — should 401 if not authenticated)
+- [ ] Click "Choose from Library" on the Hero form — widget opens, select an image, preview updates, save → MongoDB `hero` document stores `backgroundImage: { url, public_id }`
+- [ ] Click "Choose from Library" on the About form — same, `about` document stores `image: { url, public_id }`
 - [ ] Click "Choose from Library" on Service Create — same
 - [ ] Click "Choose from Library" on Service Edit — existing image replaced
 - [ ] Click "Add from Library" on Property Create — widget opens in multi-select, selected images appear in the grid alongside uploaded ones
-- [ ] Click "Add from Library" on Property Edit — library images add to existing list, form saves with `{ url, public_id }` for all
-- [ ] Public hero section still renders correctly after Hero model migration
-- [ ] Public about section still renders correctly after About model migration
-- [ ] Delete an image from within the Cloudinary widget UI — image removed from Cloudinary dashboard
+- [ ] Click "Add from Library" on Property Edit — library images add to existing list, form saves with correct `{ url, public_id }` for all
+- [ ] Public Hero section renders background image correctly (CSS var resolved from `backgroundImage.url`)
+- [ ] Public About section renders image correctly (`data.image?.url` used as `<img src>`)
 - [ ] File upload ("Upload" path) still works on all sections — no regression
+- [ ] Delete an image from within the Cloudinary widget UI — image removed from Cloudinary dashboard
 
 ---
 

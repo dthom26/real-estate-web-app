@@ -1,5 +1,5 @@
 .header {
-  position: relative; /* required for z-index to take effect */
+  position: relative;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -7,8 +7,8 @@
   height: 56px;
   padding: 0 20px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0; /* single consistent separator */
-  flex-shrink: 0; /* prevent header from collapsing in the flex column */
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -23,10 +23,43 @@
   gap: 12px;
 }
 
-@media (max-width: 640px) {
+/* Hamburger — hidden on desktop, shown on mobile */
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.menuToggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #222;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.menuToggle:hover span {
+  background: var(--color-primary);
+}
+
+@media (max-width: 768px) {
   .header {
-    padding: 10px 12px;
+    padding: 0 12px;
   }
+
+  .menuToggle {
+    display: flex;
+  }
+
+  /* Hide the header brand on mobile — sidebar brand takes over when open */
   .brand {
     font-size: 15px;
   }

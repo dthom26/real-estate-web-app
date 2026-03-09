@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useService } from "../../hooks/useService";
 import { useServiceForm } from "../../hooks/useServiceForm";
+import { useMediaLibrary } from "../../hooks/useMediaLibrary";
 import styles from "./ServicesCreate.module.css";
 
 /**
@@ -22,6 +23,7 @@ export default function ServiceEdit() {
  */
 function ServiceEditForm({ service, serviceId }) {
   const navigate = useNavigate();
+  const { openLibrary } = useMediaLibrary();
 
   const {
     formData,
@@ -30,6 +32,7 @@ function ServiceEditForm({ service, serviceId }) {
     error,
     handleChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   } = useServiceForm(service, serviceId);
 
@@ -102,6 +105,17 @@ function ServiceEditForm({ service, serviceId }) {
               accept="image/*"
               onChange={handleImageChange}
             />
+            <button
+              type="button"
+              onClick={() =>
+                openLibrary({
+                  multiple: false,
+                  onSelect: (asset) => handleLibrarySelect(asset),
+                })
+              }
+            >
+              Choose from Library
+            </button>
             <small>Max file size: 5MB. Formats: JPG, PNG, WebP</small>
           </div>
 

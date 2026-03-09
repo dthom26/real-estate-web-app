@@ -8,6 +8,7 @@
   display: flex;
   flex: 1;
   overflow: hidden; /* prevent sidebar from causing horizontal scroll */
+  position: relative; /* stacking context for overlay */
 }
 
 .main {
@@ -16,5 +17,20 @@
   overflow-y: auto;
   padding: clamp(12px, 2.5vw, 32px);
   box-sizing: border-box;
-  background: #f7fafc; /* visually separates content area from sidebar */
+  background: var(--color-page-bg);
+}
+
+/* Dark overlay that appears behind the open sidebar on mobile */
+.overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 150; /* above content, below sidebar (200) */
+  }
 }

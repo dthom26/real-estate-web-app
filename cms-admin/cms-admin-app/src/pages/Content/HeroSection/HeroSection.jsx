@@ -1,5 +1,6 @@
 import { useHero } from "../../../hooks/useHero";
 import { useHeroForm } from "../../../hooks/useHeroForm";
+import { useMediaLibrary } from "../../../hooks/useMediaLibrary";
 import styles from "./HeroSection.module.css";
 
 /**
@@ -19,6 +20,8 @@ export default function HeroSection() {
  * HeroForm - Inner component that uses the form hook.
  */
 function HeroForm({ hero }) {
+  const { openLibrary } = useMediaLibrary();
+
   const {
     formData,
     imagePreview,
@@ -28,6 +31,7 @@ function HeroForm({ hero }) {
     handleChange,
     handleCheckboxChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   } = useHeroForm(hero);
 
@@ -146,6 +150,17 @@ function HeroForm({ hero }) {
               accept="image/*"
               onChange={handleImageChange}
             />
+            <button
+              type="button"
+              onClick={() =>
+                openLibrary({
+                  multiple: false,
+                  onSelect: (asset) => handleLibrarySelect(asset),
+                })
+              }
+            >
+              Choose from Library
+            </button>
             <small>Max file size: 5MB. Formats: JPG, PNG, WebP</small>
           </div>
 

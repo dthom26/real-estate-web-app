@@ -26,6 +26,7 @@ export function useServiceForm(initialData = null, serviceId = null) {
   const [imagePreview, setImagePreview] = useState(
     initialData?.image?.url || null,
   );
+  const [selectedLibraryImage, setSelectedLibraryImage] = useState(null);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +39,12 @@ export function useServiceForm(initialData = null, serviceId = null) {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleLibrarySelect = (asset) => {
+    setImageFile(null);
+    setImagePreview(asset.url);
+    setSelectedLibraryImage(asset);
   };
 
   // Handle image file selection
@@ -64,8 +71,9 @@ export function useServiceForm(initialData = null, serviceId = null) {
     try {
       let imageData = formData.image; // { url, public_id } if existing
 
-      // If a new image file was selected, upload it first
-      if (imageFile) {
+      if (selectedLibraryImage) {
+        imageData = selectedLibraryImage;
+      } else if (imageFile) {
         imageData = await uploadImage(imageFile); // { url, public_id }
       }
 
@@ -106,6 +114,7 @@ export function useServiceForm(initialData = null, serviceId = null) {
     error,
     handleChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   };
 }

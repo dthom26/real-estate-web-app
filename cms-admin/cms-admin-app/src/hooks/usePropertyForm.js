@@ -90,7 +90,7 @@ export function usePropertyForm(initialData = null, propertyId = null) {
       // We iterate through the original images array (which is in the user's desired order) and replace new items with their corresponding URLs from the upload response.
       let newIndex = 0;
       const finalImages = images.map((img) => {
-        if (img.type === "existing")
+        if (img.type === "existing" || img.type === "library")
           return { url: img.url, public_id: img.public_id };
         return newUrls[newIndex++]; // { url, public_id } objects from Step 8a
       });
@@ -132,6 +132,10 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     }
   };
 
+  const addLibraryImages = (libraryImages) => {
+    setImages((prev) => [...prev, ...libraryImages]);
+  };
+
   return {
     formData,
     images, // pass to <ImageUpload images={images} onChange={setImages} />
@@ -141,6 +145,7 @@ export function usePropertyForm(initialData = null, propertyId = null) {
     isEditMode,
     handleChange,
     handleCheckboxChange,
+    addLibraryImages,
     handleSubmit,
   };
 }

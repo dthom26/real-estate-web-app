@@ -6,7 +6,10 @@ const AboutSchema = new Schema(
   {
     header: { type: String, required: true },
     textContent: { type: String, required: true },
-    image: { type: String, required: false },
+    image: {
+      url: { type: String },
+      public_id: { type: String },
+    },
     buttonText: { type: String, required: false },
     buttonLink: { type: String, required: false },
   },

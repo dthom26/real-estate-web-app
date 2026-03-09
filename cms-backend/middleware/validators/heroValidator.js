@@ -19,9 +19,18 @@ export const heroValidation = [
 
   body("backgroundImage")
     .optional()
-    .trim()
-    .isString()
-    .withMessage("Background image must be a string"),
+    .custom((value) => {
+      if (typeof value === "string") return true; // Allow string URLs old shape
+      if (
+        typeof value === "object" && 
+        value !== null &&
+        typeof value.url === "string" &&
+        typeof value.public_id === "string"
+      ) {
+        return true; // Allow new shape with url and public_id
+      }
+      throw new Error("Image must be a string URL or an object with url and public_id");
+    }),
 
   body("ctaText")
     .optional()

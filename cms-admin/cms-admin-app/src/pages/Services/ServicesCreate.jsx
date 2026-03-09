@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useServiceForm } from "../../hooks/useServiceForm";
+import { useMediaLibrary } from "../../hooks/useMediaLibrary";
 import styles from "./ServicesCreate.module.css";
 
 export default function ServicesCreate() {
   const navigate = useNavigate();
-
+  const { openLibrary } = useMediaLibrary();
   const {
     formData,
     imagePreview,
@@ -12,6 +13,7 @@ export default function ServicesCreate() {
     error,
     handleChange,
     handleImageChange,
+    handleLibrarySelect,
     handleSubmit,
   } = useServiceForm();
 
@@ -93,6 +95,17 @@ export default function ServicesCreate() {
               <img src={imagePreview} alt="Preview" />
             </div>
           )}
+          <button
+            type="button"
+            onClick={() =>
+              openLibrary({
+                multiple: false,
+                onSelect: (asset) => handleLibrarySelect(asset),
+              })
+            }
+          >
+            Choose from Library
+          </button>
         </section>
 
         {/* Additional Info Section */}
