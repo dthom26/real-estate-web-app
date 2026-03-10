@@ -2,6 +2,7 @@ import { useState } from "react";
 import About from "./About/About";
 import Contact from "./Contact/Contact";
 import HeroSection from "./HeroSection/HeroSection";
+import FeaturedGallery from "./FeaturedGallery/FeaturedGallery";
 import styles from "./Content.module.css";
 
 /**
@@ -72,6 +73,34 @@ export default function Content() {
             }`}
           >
             <About />
+          </div>
+        </div>
+
+        {/* Featured 3D Gallery */}
+        <div className={styles.accordionItem}>
+          <button
+            type="button"
+            className={styles.accordionHeader}
+            onClick={() => toggle("featuredGallery")}
+            aria-expanded={openSection === "featuredGallery"}
+          >
+            <span>Featured 3D Gallery</span>
+            <span
+              className={
+                openSection === "featuredGallery"
+                  ? styles.chevronOpen
+                  : styles.chevron
+              }
+            >
+              ▼
+            </span>
+          </button>
+          <div
+            className={`${styles.accordionBody}${
+              openSection === "featuredGallery" ? "" : ` ${styles.hidden}`
+            }`}
+          >
+            <FeaturedGallery />
           </div>
         </div>
 

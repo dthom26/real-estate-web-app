@@ -5,6 +5,7 @@ import {
   getPropertyById,
   createProperty,
   updateProperty,
+  patchFeatured,
   deleteProperty,
 } from "../controllers/propertyController.js";
 import {
@@ -41,6 +42,9 @@ router.put(
   handleValidationErrors,
   updateProperty,
 );
+
+// PATCH /api/properties/:id/featured - Update featured fields only (PROTECTED)
+router.patch("/:id/featured", authenticateToken, patchFeatured);
 
 // DELETE /api/properties/:id - Delete property by ID (PROTECTED)
 router.delete("/:id", authenticateToken, deleteProperty);
