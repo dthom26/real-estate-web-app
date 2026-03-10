@@ -240,3 +240,12 @@ export function putHero(data, opts) {
 export function getCloudinarySignature(opts) {
   return get("/api/cloudinary/sign-ml", opts);
 }
+
+// Featured Gallery — patch only featured fields (featured, featuredOrder, featuredImage)
+export function patchFeaturedProperty(id, data, opts) {
+  return request(`/api/properties/${id}/featured`, {
+    method: "PATCH",
+    body: data,
+    ...opts,
+  });
+}

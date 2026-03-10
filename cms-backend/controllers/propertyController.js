@@ -90,6 +90,24 @@ export const getCarousel = async (req, res, next) => {
     next(error);
   }
 };
+// patch featured fields only (featured, featuredOrder, featuredImage)
+export const patchFeatured = async (req, res, next) => {
+  try {
+    const { featured, featuredOrder, featuredImage } = req.body;
+    const updates = {};
+    if (featured !== undefined) updates.featured = featured;
+    if (featuredOrder !== undefined) updates.featuredOrder = featuredOrder;
+    if (featuredImage !== undefined) updates.featuredImage = featuredImage;
+
+    const updated = await propertyRepository.updateById(req.params.id, updates);
+    if (!updated) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
+};
 // delete property
 export const deleteProperty = async (req, res, next) => {
   try {
